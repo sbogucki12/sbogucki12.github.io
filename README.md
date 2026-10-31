@@ -1,145 +1,94 @@
-# BOGOODSKI-AI Portfolio Website
+# bogoodski.com
 
-![canva](media/readme/canva.jpg)
+> **Looking for the original 2023 build log?** See [README_ARCHIVE_2023.md](README_ARCHIVE_2023.md). It holds the day-by-day ChatGPT prompting log used to build the first version of this site: the prompts, screenshots, and notes from that AI-assisted development experiment.
 
-This project is a portfolio website built with HTML, CSS, and vanilla JavaScript. It's designed to be fully responsive across various device screen sizes. The website has been deployed on GitHub pages and can be accessed at [https://sbogucki12.github.io/](https://sbogucki12.github.io/). The entire chat dialog that "developed" this site is here: [ChatGPT](https://chat.openai.com/share/c6599edc-b2e6-4c26-a9fd-78e6c78d456c)
+Personal site of BOGOODSKI, rebuilt with [Astro](https://astro.build), [React](https://react.dev), and [Tailwind CSS](https://tailwindcss.com).
 
-## Objective
+## Project structure
 
-The main objective of this project is to utilize generative artificial intelligence, primarily ChatGPT, to generate a portfolio website. This approach leverages AI capabilities to streamline and enhance the web development process.
+```
+/
+├── public/
+│   ├── CNAME              # custom domain (bogoodski.com)
+│   ├── maui.html          # Maui 2023 story, still served at /maui.html
+│   ├── maui.css
+│   ├── maui.js
+│   ├── favicon.*, site.webmanifest, ...
+│   └── legacy/            # original 2023 site, served at /legacy/
+│       ├── index.html
+│       ├── styles.css
+│       ├── script.js
+│       └── media/         # images and video (also used by maui.html)
+├── src/
+│   ├── pages/             # each .astro/.md file here becomes a route
+│   └── styles/global.css  # Tailwind entry point
+├── astro.config.mjs
+└── package.json
+```
 
-![chatgpt style objective](media/readme/chatgpt-style-objective.jpg)
+Anything in `public/` is copied to the build output unchanged.
 
-## Progress
+## Commands
 
-**Day 7: Sept. 24, 2023:**
+Run from the project root:
 
-Added a "websites" section.  
+| Command           | Action                                       |
+| :---------------- | :------------------------------------------- |
+| `npm install`     | Install dependencies                         |
+| `npm run dev`     | Start the dev server at `localhost:4321`     |
+| `npm run build`   | Build the production site to `./dist/`       |
+| `npm run preview` | Preview the production build locally         |
+| `npm run astro …` | Run Astro CLI commands (`astro add`, `astro check`) |
 
-![Websites Section](media/readme/websites_section.jpg)
+Requires Node.js 22 or later (see `engines` in `package.json`).
 
-I used ChatGPT as much as possible to generate the code.  Here is the prompt I used: 
+## Deploying to Netlify
 
-![Websites Section Prompt](media/readme/websites_section_prompt.jpg)
+Astro builds a fully static site by default, so no adapter is needed.
 
-**Day 6: Sept. 16, 2023:**
+### Option 1: Netlify UI (Git-based)
 
-Added a "run" section to the home page with a futuristic neon theme. The section showcases a love for running, along with an image from my run log, and provides links to a run log and a Strava profile. The entire code for this update was generated with the assistance of ChatGPT.
+1. Push this repository to GitHub.
+2. In Netlify, choose **Add new site → Import an existing project** and select the repo.
+3. Use these build settings:
+   - **Build command:** `npm run build`
+   - **Publish directory:** `dist`
+4. Under **Site configuration → Environment variables**, optionally set `NODE_VERSION` to `22` (or later).
+5. Deploy. Every push to `main` triggers a new build; pull requests get deploy previews.
 
-![Run Update](media/readme/run-update.jpg)
+### Option 2: `netlify.toml`
 
-**Day 5: Aug. 16, 2023:**
+Commit a `netlify.toml` at the project root to keep the settings in code:
 
-Just added my Maui story.  I really put my heart into telling this exactly as I observed it.  [Please check it out.](https://bogoodski.com/maui.html)
+```toml
+[build]
+  command = "npm run build"
+  publish = "dist"
 
- **Day 4: Aug. 4, 2023:**
+[build.environment]
+  NODE_VERSION = "22"
+```
 
-On day 4, we used AI capabilities to generate a new feature: an interactive section displaying images from an interview. Clicking on an image opens it in a full-screen modal, enhancing the user experience. The AI was instrumental in creating the JavaScript logic for the modal functionality, demonstrating the potential of AI in web development. (***Editor's Note: AI has been instrumental in every update. Lol***)
+### Option 3: Netlify CLI
 
-Interview Images Prompt:
+```sh
+npm install -g netlify-cli
+netlify login
+netlify init          # link or create the site
+npm run build
+netlify deploy --prod --dir=dist
+```
 
-![Interview Images Prompt](media/readme/interview-images-prompt.jpg)
+### Custom domain
 
-- **Day 3: Aug. 3, 2023:**
+In Netlify, go to **Domain management → Add a domain** and enter `bogoodski.com`, then update DNS at your registrar as Netlify instructs (or move DNS to Netlify). Netlify provisions HTTPS automatically.
 
-On day 3, we added a new section to the website that contains an embedded YouTube video. This video is centrally aligned on the screen for both desktop and mobile layouts and is styled with a fluorescent colored border and a contrasting neon drop shadow. The video's caption is subtly styled with a fluorescent neon color that is subdued with a lower opacity. The caption's text aligns with the right edge of the container, and on mobile devices, the font size is adjusted to fit on one row. 
+`public/CNAME` is only read by GitHub Pages; Netlify ignores it. It's kept so the site can still deploy to GitHub Pages if needed.
 
-Video Embed Prompt:
+### Server-side features (optional)
 
-![Video Embed Prompt](media/readme/video-prompt.jpg)
+If you later add on-demand rendering (API routes, server islands, SSR pages), add the Netlify adapter:
 
-Video Thumbnail:
-
-![Video Thumbnail](media/readme/bogoodski-intro-vid-thumb.png)
-
-- **Day 2: Aug. 2, 2023:**
-
-On day 2, we added a resume feature and a favicon to the website. The resume feature consists of a modal that contains a carousel with different sections of the resume. This content was structured and styled by ChatGPT based on text provided from a LinkedIn profile. The favicon addition helps to identify the website in browser tabs.
-
-Favicon:
-
-![Favicon](media/readme/favicon-generator.jpg)
-
-Resume Prompt:
-
-![Resume Prompt](media/readme/resume-prompt.jpg)
-
-Resume Response:
-
-![Resume Response](media/readme/resume-response.jpg)
-
-- **Day 1: Aug. 1, 2023:** 
-
-On day 1, we made significant progress by adding a modal and an image carousel to the website. These features enhance the interactivity and visual appeal of the site.
-
-Dynamic layout for mobile and desktop: 
-
-![Day 1 Aug 1 2023](media/readme/dynamic-layout.gif)
-
-Modal and Carousel:
-
-![Modal and Carousel](media/readme/carousel-prompt.jpg)
-
-- **Day 0: July 31, 2023:** 
-
-The project started with basic scaffolding and style application to the website.
-
-![Day 0 July 31 2023](media/readme/day0july312023.jpg)
-
-## Features
-
-- **Dynamic resizing:** The website layout adjusts dynamically to fit different device screen sizes.
-
-![dynamically resize](media/readme/dynamically-resize.jpg)
-![dynamic resize gif](media/readme/dynamic-resize-gif.gif)
-
-- **Modal and Carousel:** The website features a modal that houses an image carousel, adding an interactive visual element to the site.
-
-![Modal and Carousel Prompt](media/readme/update-carousel-prompt.jpg)
-![Modal and Carousel](media/readme/modal-gif.gif)
-
-- **Resume Feature:** The resume feature provides detailed professional experience, education, and other qualifications in a modal with a carousel for easy navigation.
-
-![Resume Feature](media/readme/resume-response.jpg)
-
-- **Favicon:** A favicon has been added for better identification of the website in browser tabs.
-
-![Favicon](media/readme/favicon-generator.jpg)
-
-- **Video Section:** The website features an embedded YouTube video in a separate section with unique stylings.
-
-![Video Embed Prompt](media/readme/video-prompt.jpg)
-![Video Thumbnail](media/readme/bogoodski-intro-vid-thumb.png)
-
-- **Local development:** Utilize a quick python server to view website during development.
-
-![server](media/readme/server.jpg)
-
-## Development Process
-
-1. **Initial Prompt:** The project started with an initial prompt, outlining the requirements and objectives for the website.
-
-![initial prompt](media/readme/initial-prompt.jpg)
-
-2. **Initial Scaffold:** The website was scaffolded with basic HTML structure and CSS styling.
-
-![initial scaffold](media/readme/initial-scaffold.jpg)
-
-3. **ChatGPT Assistance:** ChatGPT was used to generate and refine the HTML, CSS, and JavaScript code for the website, including the creation of a modal, an image carousel, a resume feature, a favicon, and a video section.
-
-![ChatGPT Assistance](media/readme/font-awesome.jpg)
-
-## Deployment
-
-The website has been deployed on GitHub pages and can be accessed [here](https://sbogucki12.github.io/).
-
-## Future Enhancements
-
-    * Add a blog section
-    * Add a contact form (something more complex to challenge the AI with)
-
-## Credits
-
-This project was created by [BOGOODSKI](https://www.linkedin.com/in/sbogucki12/). The AI, ChatGPT, played a crucial role in generating the code and even assisted in drafting and formatting this readme update.
-
-![ChatGPT Readme Prompt](media/readme/readme-prompt.jpg)
+```sh
+npx astro add netlify
+```

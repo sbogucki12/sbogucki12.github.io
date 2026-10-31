@@ -1,0 +1,251 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+// Shared surface + hover treatment so every clickable tile behaves the same:
+// lift, brighter border, soft shadow, top-edge sheen, arrow nudge.
+const tile =
+	'group relative isolate flex flex-col overflow-hidden rounded-2xl border border-zinc-800/80';
+const pad = 'p-6 sm:p-7';
+const interactive = [
+	'transition duration-300 ease-out',
+	'hover:-translate-y-0.5 hover:border-zinc-600/80 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
+	'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400',
+	'motion-reduce:transition-none motion-reduce:hover:translate-y-0',
+	// Sheen: a faint light along the top edge that fades in on hover.
+	'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:-z-10 before:h-px',
+	'before:bg-gradient-to-r before:from-transparent before:via-zinc-400/50 before:to-transparent',
+	'before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100',
+].join(' ');
+const arrow =
+	'inline-block transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none';
+const eyebrow = 'text-xs font-medium uppercase tracking-[0.2em]';
+
+const eqBars = [
+	{ h: 'h-6', delay: '[animation-delay:-0.9s]' },
+	{ h: 'h-9', delay: '[animation-delay:-0.3s]' },
+	{ h: 'h-5', delay: '[animation-delay:-0.6s]' },
+	{ h: 'h-10', delay: '[animation-delay:-0.1s]' },
+	{ h: 'h-7', delay: '[animation-delay:-0.75s]' },
+	{ h: 'h-4', delay: '[animation-delay:-0.45s]' },
+	{ h: 'h-8', delay: '[animation-delay:-0.2s]' },
+];
+---
+
+<MainLayout title="Steve Bogucki | Technologist, Author, Builder">
+	<h1 class="sr-only">Steve Bogucki</h1>
+
+	<!--
+		Bento grid
+		mobile: 1 column · md: 2 columns · lg: 3 columns, asymmetric
+		lg layout:  [ hero  hero | book ]
+		            [ pro | run  | book ]
+		            [ dj  | travel travel ]
+	-->
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:auto-rows-[minmax(15rem,auto)]">
+		<!-- Intro / Hero -->
+		<section
+			aria-labelledby="intro-heading"
+			class:list={[tile, pad, 'justify-between gap-10 bg-gradient-to-br from-zinc-900 via-zinc-900/60 to-zinc-950 md:col-span-2']}
+		>
+			<div
+				aria-hidden="true"
+				class="pointer-events-none absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-slate-500/10 blur-3xl"
+			></div>
+			<div>
+				<p class:list={[eyebrow, 'text-zinc-500']}>Hi, I’m Steve</p>
+				<h2
+					id="intro-heading"
+					class="mt-4 max-w-xl text-3xl font-semibold tracking-tight text-balance text-zinc-50 sm:text-4xl"
+				>
+					I work where data science meets human storytelling.
+				</h2>
+				<p class="mt-5 max-w-xl leading-relaxed text-pretty text-zinc-400">
+					By day I help a federal agency put AI to work. The rest of the time I’m writing, building
+					things on the web, logging miles, or behind the decks. It all comes from the same place:
+					finding the signal and telling it in a way people actually feel.
+				</p>
+			</div>
+			<ul class="flex flex-wrap gap-2 text-xs text-zinc-300" aria-label="Roles">
+				{['Technologist', 'Author', 'Builder', 'Runner', 'DJ'].map((role) => (
+					<li class="rounded-full border border-zinc-700/70 bg-zinc-950/60 px-3 py-1">{role}</li>
+				))}
+			</ul>
+		</section>
+
+		<!-- The Book -->
+		<a
+			href="https://the-ghosts-we-carry.com/"
+			target="_blank"
+			rel="noopener noreferrer"
+			class:list={[tile, pad, interactive, 'bg-zinc-900/60 hover:bg-zinc-900 lg:row-span-2']}
+		>
+			<p class:list={[eyebrow, 'text-zinc-500']}>The Book</p>
+
+			<!-- Typographic cover treatment (decorative, not the published cover). -->
+			<div
+				aria-hidden="true"
+				class="relative mx-auto my-8 flex aspect-[2/3] w-40 flex-col justify-between overflow-hidden rounded-md bg-gradient-to-b from-slate-200 via-slate-300 to-slate-500 p-4 shadow-[0_24px_50px_-18px_rgba(0,0,0,0.9)] ring-1 ring-white/10 transition-transform duration-500 ease-out group-hover:-rotate-1 group-hover:scale-[1.03] motion-reduce:transition-none sm:w-44 lg:my-auto"
+			>
+				<div class="absolute inset-y-0 left-0 w-2 bg-gradient-to-r from-black/20 to-transparent"></div>
+				<div class="absolute -bottom-10 -right-6 size-32 rounded-full bg-white/40 blur-2xl"></div>
+				<span class="relative text-[0.6rem] font-medium uppercase tracking-[0.25em] text-slate-700">Steve Bogucki</span>
+				<span class="relative font-serif text-2xl leading-tight text-slate-900">The Ghosts We Carry</span>
+			</div>
+
+			<h2 class="text-2xl font-semibold tracking-tight text-zinc-50">The Ghosts We Carry</h2>
+			<p class="mt-2 text-sm leading-relaxed text-zinc-400">My book.</p>
+			<span class="mt-6 inline-flex items-center gap-1.5 text-sm font-medium text-zinc-100">
+				the-ghosts-we-carry.com <span aria-hidden="true" class={arrow}>↗</span>
+			</span>
+			<span class="sr-only">(opens in a new tab)</span>
+		</a>
+
+		<!-- Professional & Consulting -->
+		<a
+			href="https://bogoodski.dev"
+			target="_blank"
+			rel="noopener noreferrer"
+			class:list={[tile, pad, interactive, 'bg-zinc-900/60 hover:bg-zinc-900']}
+		>
+			<p class:list={[eyebrow, 'text-zinc-500']}>Professional</p>
+			<h2 class="mt-4 text-lg font-semibold tracking-tight text-zinc-50">AI &amp; data leadership</h2>
+			<p class="mt-2 text-sm leading-relaxed text-zinc-400">
+				Division Manager of AI &amp; Business Intelligence at the FAA, building data ontologies and the
+				analytics that run on them.
+			</p>
+			<ul class="mt-4 space-y-1.5 text-sm text-zinc-300">
+				<li class="flex items-center gap-2">
+					<span aria-hidden="true" class="size-1 rounded-full bg-zinc-500"></span>
+					Cornell, Machine Learning
+				</li>
+				<li class="flex items-center gap-2">
+					<span aria-hidden="true" class="size-1 rounded-full bg-zinc-500"></span>
+					Cornell, Python for Data Science
+				</li>
+			</ul>
+			<div class="mt-auto pt-6">
+				<span
+					class="inline-flex items-center gap-1.5 rounded-md bg-zinc-100 px-3.5 py-2 text-sm font-medium text-zinc-950 transition-colors group-hover:bg-white"
+				>
+					Consulting at bogoodski.dev <span aria-hidden="true" class={arrow}>↗</span>
+				</span>
+			</div>
+			<span class="sr-only">(opens in a new tab)</span>
+		</a>
+
+		<!-- Endurance Running -->
+		<a
+			href="https://www.strava.com/athletes/31841889"
+			target="_blank"
+			rel="noopener noreferrer"
+			class:list={[tile, pad, interactive, 'bg-gradient-to-br from-slate-900 via-zinc-900 to-zinc-950']}
+		>
+			<div class="flex items-start justify-between">
+				<p class:list={[eyebrow, 'text-slate-400']}>Endurance</p>
+				<!-- Runner icon -->
+				<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-slate-400 transition-colors group-hover:text-slate-200">
+					<circle cx="14.5" cy="4" r="1.75" />
+					<path d="M8 21l3-5.5 3 2.5v4" />
+					<path d="M6 12.5l3-3.5h4.5l3 3.5 3 .5" />
+					<path d="M13.5 9l-2.5 6.5" />
+				</svg>
+			</div>
+			<p class="mt-4 text-4xl font-semibold tracking-tight text-zinc-50">
+				40+<span class="ml-1.5 text-base font-medium text-zinc-400">miles / week</span>
+			</p>
+			<p class="mt-3 text-sm leading-relaxed text-zinc-400">
+				Running is how I think. The weekly miles are a framework for mental discipline and
+				clarity.
+			</p>
+
+			<!-- Pace line: faint track with a highlight travelling along it. -->
+			<div class="mt-auto pt-6">
+			<svg aria-hidden="true" viewBox="0 0 200 40" preserveAspectRatio="none" class="h-10 w-full">
+				<path d="M0 30 C 20 30, 25 12, 45 14 S 70 32, 90 26 S 115 8, 135 12 S 165 30, 200 18" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.5" class="text-zinc-700/70" vector-effect="non-scaling-stroke" />
+				<path d="M0 30 C 20 30, 25 12, 45 14 S 70 32, 90 26 S 115 8, 135 12 S 165 30, 200 18" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="0.18 0.82" class="animate-trace text-slate-300 motion-reduce:animate-none" vector-effect="non-scaling-stroke" />
+			</svg>
+			</div>
+			<span class="sr-only">Follow on Strava (opens in a new tab)</span>
+		</a>
+
+		<!-- DJ BOGOODSKI -->
+		<a
+			href="https://soundcloud.com/djbogoodski"
+			target="_blank"
+			rel="noopener noreferrer"
+			class:list={[tile, pad, interactive, 'border-indigo-900/50 bg-gradient-to-br from-purple-950 via-indigo-950 to-zinc-950 hover:border-indigo-700/60']}
+		>
+			<div
+				aria-hidden="true"
+				class="pointer-events-none absolute -bottom-20 -left-16 -z-10 size-56 rounded-full bg-purple-700/20 opacity-60 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
+			></div>
+			<p class:list={[eyebrow, 'text-indigo-300/80']}>After hours</p>
+			<h2 class="mt-4 text-lg font-semibold tracking-[0.08em] text-zinc-50">DJ BOGOODSKI</h2>
+			<p class="mt-2 text-sm leading-relaxed text-indigo-100/70">
+				Progressive house and melodic techno, mixed live and streamed.
+			</p>
+
+			<div class="mt-auto flex items-end justify-between gap-4 pt-6">
+				<!-- Equalizer: idle until hover. -->
+				<div aria-hidden="true" class="flex h-10 items-end gap-1">
+					{eqBars.map(({ h, delay }) => (
+						<span
+							class:list={[
+								h,
+								delay,
+								'w-1 origin-bottom rounded-full bg-gradient-to-t from-indigo-400/70 to-purple-300/80',
+								'animate-eq [animation-play-state:paused] group-hover:[animation-play-state:running] motion-reduce:animate-none',
+							]}
+						></span>
+					))}
+				</div>
+				<span class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-100">
+					SoundCloud <span aria-hidden="true" class={arrow}>↗</span>
+				</span>
+			</div>
+			<span class="sr-only">(opens in a new tab)</span>
+		</a>
+
+		<!-- Adventures & Travel -->
+		<section
+			aria-labelledby="travel-heading"
+			class:list={[tile, pad, 'bg-zinc-900/40 md:col-span-2']}
+		>
+			<div class="flex items-baseline justify-between gap-4">
+				<h2 id="travel-heading" class:list={[eyebrow, 'text-zinc-500']}>Adventures &amp; Travel</h2>
+				<p class="hidden text-xs text-zinc-600 sm:block">Stories from the road</p>
+			</div>
+
+			<div class="mt-5 grid flex-1 gap-3 sm:grid-cols-2">
+				<a
+					href="/valle-de-guadalupe"
+					class:list={[tile, interactive, 'bg-gradient-to-br from-zinc-900 to-zinc-950 p-5']}
+				>
+					<p class="text-xs text-zinc-500">Baja California · Oct 2026</p>
+					<h3 class="mt-2 text-lg font-semibold tracking-tight text-zinc-50">Valle de Guadalupe</h3>
+					<p class="mt-2 text-sm leading-relaxed text-zinc-400">
+						Wine country, Banyan Tree Veya, and two dinners worth the drive.
+					</p>
+					<span class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium text-zinc-200">
+						Read the story <span aria-hidden="true" class={arrow}>→</span>
+					</span>
+				</a>
+
+				<a
+					href="/maui.html"
+					class:list={[tile, interactive, 'bg-gradient-to-br from-zinc-900 to-zinc-950 p-5']}
+				>
+					<p class="text-xs text-zinc-500">Maui · Aug 2023</p>
+					<h3 class="mt-2 text-lg font-semibold tracking-tight text-zinc-50">Lahaina</h3>
+					<p class="mt-2 text-sm leading-relaxed text-zinc-400">
+						A first-hand account of the wildfire, the evacuation, and the generosity of the people
+						of Maui.
+					</p>
+					<span class="mt-auto inline-flex items-center gap-1.5 pt-5 text-sm font-medium text-zinc-200">
+						Read the story <span aria-hidden="true" class={arrow}>→</span>
+					</span>
+				</a>
+			</div>
+		</section>
+	</div>
+</MainLayout>

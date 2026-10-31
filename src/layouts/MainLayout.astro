@@ -1,0 +1,168 @@
+---
+import '../styles/global.css';
+
+interface Props {
+	title: string;
+	description?: string;
+}
+
+const {
+	title,
+	description = 'Steve Bogucki: Division Manager of AI & Business Intelligence at the FAA, author of The Ghosts We Carry, creator of BOGOODSKI.dev, and DJ BOGOODSKI.',
+} = Astro.props;
+
+const GA_ID = 'G-EVKCT4JXLS';
+const siteUrl = 'https://bogoodski.com';
+const canonical = new URL(Astro.url.pathname, Astro.site ?? siteUrl);
+
+const navLinks = [
+	{ label: 'Home', href: '/' },
+	{ label: 'Valle de Guadalupe', href: '/valle-de-guadalupe' },
+	{ label: 'Resume', href: '/resume' },
+	{ label: 'BOGOODSKI.dev', href: 'https://bogoodski.dev', external: true },
+	{ label: 'Book', href: 'https://the-ghosts-we-carry.com/', external: true },
+];
+
+const currentPath = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@graph': [
+		{
+			'@type': 'Person',
+			'@id': `${siteUrl}/#person`,
+			name: 'Steve Bogucki',
+			alternateName: ['BOGOODSKI', 'DJ BOGOODSKI'],
+			url: `${siteUrl}/`,
+			jobTitle: 'Division Manager, AI & Business Intelligence',
+			worksFor: {
+				'@type': 'GovernmentOrganization',
+				name: 'Federal Aviation Administration',
+				url: 'https://www.faa.gov/',
+			},
+			alumniOf: {
+				'@type': 'CollegeOrUniversity',
+				name: 'University of South Florida',
+			},
+			knowsAbout: [
+				'Artificial intelligence',
+				'Business intelligence',
+				'Data analytics',
+				'Machine learning',
+				'Enterprise data management',
+			],
+			sameAs: [
+				'https://bogoodski.dev',
+				'https://the-ghosts-we-carry.com/',
+				'https://www.linkedin.com/in/sbogucki12/',
+				'https://github.com/sbogucki12',
+				'https://medium.com/@bogoodski',
+				'https://soundcloud.com/djbogoodski',
+			],
+		},
+		{
+			'@type': 'Book',
+			'@id': 'https://the-ghosts-we-carry.com/#book',
+			name: 'The Ghosts We Carry',
+			url: 'https://the-ghosts-we-carry.com/',
+			author: { '@id': `${siteUrl}/#person` },
+		},
+		{
+			'@type': 'WebSite',
+			'@id': `${siteUrl}/#website`,
+			name: 'BOGOODSKI',
+			url: `${siteUrl}/`,
+			inLanguage: 'en',
+			author: { '@id': `${siteUrl}/#person` },
+			publisher: { '@id': `${siteUrl}/#person` },
+		},
+	],
+};
+---
+
+<!doctype html>
+<html lang="en" class="bg-zinc-950">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="generator" content={Astro.generator} />
+		<meta name="theme-color" content="#09090b" />
+		<title>{title}</title>
+		<link rel="canonical" href={canonical} />
+
+		<link rel="icon" href="/favicon.ico" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+
+		<!-- Google Analytics 4. Init lives in an external file so the CSP needs no 'unsafe-inline'. -->
+		<script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}></script>
+		<script is:inline src="/scripts/ga-init.js"></script>
+
+		<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+	</head>
+	<body class="min-h-dvh bg-zinc-950 text-zinc-300 antialiased selection:bg-zinc-700 selection:text-zinc-50">
+		<a
+			href="#main"
+			class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-zinc-100 focus:px-3 focus:py-2 focus:text-sm focus:text-zinc-950"
+		>
+			Skip to content
+		</a>
+
+		<header class="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md">
+			<nav
+				aria-label="Primary"
+				class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-8 gap-y-3 px-6 py-4"
+			>
+				<a
+					href="/"
+					class="text-sm font-semibold uppercase tracking-[0.2em] text-zinc-100 transition-colors hover:text-white"
+				>
+					Bogoodski
+				</a>
+
+				<ul class="-mx-2 flex items-center gap-1 overflow-x-auto text-sm">
+					{navLinks.map(({ label, href, external }) => {
+						const isActive = !external && href === currentPath;
+						return (
+							<li class="shrink-0">
+								<a
+									href={href}
+									aria-current={isActive ? 'page' : undefined}
+									target={external ? '_blank' : undefined}
+									rel={external ? 'noopener noreferrer' : undefined}
+									class:list={[
+										'inline-flex items-center gap-1 rounded-md px-2 py-1.5 transition-colors',
+										'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400',
+										isActive
+											? 'text-zinc-50'
+											: 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100',
+									]}
+								>
+									{label}
+									{external && (
+										<span aria-hidden="true" class="text-xs text-zinc-500">↗</span>
+									)}
+									{external && <span class="sr-only">(opens in a new tab)</span>}
+								</a>
+							</li>
+						);
+					})}
+				</ul>
+			</nav>
+		</header>
+
+		<main id="main" class="mx-auto max-w-5xl px-6 py-16">
+			<slot />
+		</main>
+
+		<footer class="border-t border-zinc-800/80">
+			<div class="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-6 py-8 text-xs text-zinc-500">
+				<span>© {new Date().getFullYear()} Steve Bogucki</span>
+				<a href="/legacy/" class="transition-colors hover:text-zinc-300">Original 2023 site</a>
+			</div>
+		</footer>
+	</body>
+</html>

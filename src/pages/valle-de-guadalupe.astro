@@ -1,0 +1,184 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import ItineraryViewer from '../components/ItineraryViewer.jsx';
+
+// Placeholder: drop the real PDF at public/downloads/ with this name.
+const ITINERARY_PDF = '/downloads/valle-de-guadalupe-itinerary.pdf';
+
+// Placeholder gallery slots. Replace each entry with { src, alt, width, height }
+// once photos are ready; the aspect ratios here just give the masonry layout shape.
+const gallery = [
+	{ aspect: 'aspect-[4/5]', label: 'Banyan Tree Veya' },
+	{ aspect: 'aspect-[3/2]', label: 'Vineyards' },
+	{ aspect: 'aspect-square', label: 'Fauna' },
+	{ aspect: 'aspect-[2/3]', label: 'Golden hour' },
+	{ aspect: 'aspect-[3/2]', label: 'Deckman’s' },
+	{ aspect: 'aspect-[4/5]', label: 'The valley' },
+	{ aspect: 'aspect-[16/9]', label: 'Tasting room' },
+	{ aspect: 'aspect-[3/4]', label: 'Fire and smoke' },
+	{ aspect: 'aspect-square', label: 'Last morning' },
+];
+---
+
+<MainLayout
+	title="Valle de Guadalupe | Steve Bogucki"
+	description="Notes from an October 2026 trip to Valle de Guadalupe: Banyan Tree Veya, Fauna, and Deckman’s."
+>
+	<!-- PLACEHOLDER STORY: replace all narrative copy below with the real write-up. -->
+	<article class="mx-auto max-w-3xl">
+		<header class="pb-12">
+			<p class="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
+				Travel · Baja California, Mexico
+			</p>
+			<h1 class="mt-5 text-4xl font-semibold tracking-tight text-balance text-zinc-50 sm:text-5xl">
+				Valle de Guadalupe
+			</h1>
+			<p class="mt-5 text-lg leading-relaxed text-pretty text-zinc-400">
+				A few days in Mexico’s wine country, organized around a place to stay and two dinners worth
+				the drive.
+			</p>
+			<p class="mt-6 text-sm text-zinc-500">
+				<time datetime="2026-10">October 2026</time>
+			</p>
+		</header>
+
+		<figure class="mb-16">
+			<div
+				class="flex aspect-[16/9] w-full items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600"
+			>
+				Hero photo
+			</div>
+			<figcaption class="mt-3 text-sm text-zinc-500">
+				The valley in late October, after the harvest.
+			</figcaption>
+		</figure>
+
+		<div class="space-y-16 text-base leading-relaxed text-zinc-300">
+			<section aria-labelledby="arrival">
+				<h2 id="arrival" class="text-2xl font-semibold tracking-tight text-zinc-50">Arrival</h2>
+				<div class="mt-5 space-y-5">
+					<p>
+						The road into Valle de Guadalupe gives you time to slow down. The traffic thins, the
+						hills turn to rows of vines, and the pace shifts from schedules to meals. By late October
+						the harvest is in and the valley is quieter, which suited the purpose of the trip:
+						rest, good food, and very little on the calendar.
+					</p>
+					<p>
+						This is a short account of where we stayed, where we ate, and what stuck with me
+						afterward.
+					</p>
+				</div>
+			</section>
+
+			<section aria-labelledby="veya">
+				<h2 id="veya" class="text-2xl font-semibold tracking-tight text-zinc-50">Banyan Tree Veya</h2>
+				<div class="mt-5 space-y-5">
+					<p>
+						Banyan Tree Veya was home base. The villas sit low against the hillside, so the
+						landscape stays the main event, and the design keeps out of the way. Mornings started
+						slowly with coffee, a view across the vineyards, and no particular plan until the
+						afternoon.
+					</p>
+					<p>
+						What stood out was the restraint. The service was attentive without hovering, and
+						the property felt built to make you stay put, which after a long stretch of work was
+						exactly the point.
+					</p>
+				</div>
+				<figure class="mt-8">
+					<div
+						class="flex aspect-[3/2] w-full items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600"
+					>
+						Photo: Banyan Tree Veya
+					</div>
+					<figcaption class="mt-3 text-sm text-zinc-500">Morning at the villa.</figcaption>
+				</figure>
+			</section>
+
+			<section aria-labelledby="fauna">
+				<h2 id="fauna" class="text-2xl font-semibold tracking-tight text-zinc-50">Fauna</h2>
+				<div class="mt-5 space-y-5">
+					<p>
+						Dinner at Fauna was the most deliberate meal of the trip. The menu draws on what the
+						region produces, and each course builds on the last. It’s the kind of meal where you
+						notice the pacing as much as the plates.
+					</p>
+					<p>
+						Paired with local wine, it made a strong case that some of the most interesting cooking
+						in Mexico is happening a short drive south of the border.
+					</p>
+				</div>
+			</section>
+
+			<section aria-labelledby="deckmans">
+				<h2 id="deckmans" class="text-2xl font-semibold tracking-tight text-zinc-50">Deckman’s</h2>
+				<div class="mt-5 space-y-5">
+					<p>
+						Deckman’s was the counterpoint: open air, wood smoke, and cooking that feels closer to
+						the land. Eating outdoors as the light faded over the vineyard was the moment the trip
+						came together.
+					</p>
+					<p>
+						If Fauna was precision, Deckman’s was ease. Both were the right call, and I’d book them
+						again in the same order.
+					</p>
+				</div>
+				<figure class="mt-8">
+					<div
+						class="flex aspect-[3/2] w-full items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600"
+					>
+						Photo: Deckman’s
+					</div>
+					<figcaption class="mt-3 text-sm text-zinc-500">Dinner as the sun went down.</figcaption>
+				</figure>
+			</section>
+
+			<section aria-labelledby="takeaways">
+				<h2 id="takeaways" class="text-2xl font-semibold tracking-tight text-zinc-50">Takeaways</h2>
+				<div class="mt-5 space-y-5">
+					<p>
+						The valley rewards planning ahead and then leaving room. Book the dinners early, keep
+						the days loose, and let the drive set the pace. The full itinerary is below for anyone
+						planning a similar trip.
+					</p>
+				</div>
+			</section>
+		</div>
+	</article>
+
+	<section aria-labelledby="itinerary-heading" class="mx-auto mt-20 max-w-3xl">
+		<h2 id="itinerary-heading" class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
+			Itinerary
+		</h2>
+		<div class="mt-6">
+			<ItineraryViewer client:visible pdfUrl={ITINERARY_PDF} />
+		</div>
+	</section>
+
+	<section aria-labelledby="gallery-heading" class="mt-24 border-t border-zinc-800/80 pt-16">
+		<div class="flex flex-wrap items-baseline justify-between gap-4">
+			<h2 id="gallery-heading" class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
+				Gallery
+			</h2>
+			<p class="text-sm text-zinc-600">Photos coming soon</p>
+		</div>
+
+		<!-- CSS masonry: multi-column layout; items avoid breaking across columns. -->
+		<ul class="mt-8 columns-1 gap-4 sm:columns-2 lg:columns-3">
+			{gallery.map(({ aspect, label }) => (
+				<li class="mb-4 break-inside-avoid">
+					<figure>
+						<div
+							class:list={[
+								aspect,
+								'flex w-full items-center justify-center rounded-lg border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600',
+							]}
+						>
+							{label}
+						</div>
+					</figure>
+				</li>
+			))}
+		</ul>
+	</section>
+</MainLayout>

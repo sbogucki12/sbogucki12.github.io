@@ -1,0 +1,30 @@
+# Steve Bogucki (BOGOODSKI)
+
+> Steve Bogucki is the Division Manager of AI & Business Intelligence at the Federal Aviation Administration (FAA), the author of *The Ghosts We Carry*, the creator of BOGOODSKI.dev, and a DJ who performs as DJ BOGOODSKI. This site, https://bogoodski.com, is his personal home page.
+
+## About
+
+- **Professional role:** Division Manager, AI & Business Intelligence, Federal Aviation Administration (FAA). His work focuses on enterprise data and analytics, including data ontologies, digitized business processes, and applying generative AI, large language models, and machine learning to domain-specific problems.
+- **Background:** Started in web development, moved into data science, and now leads an analytics organization. U.S. Army veteran. BA from the University of South Florida; completed Cornell certificate programs in Python for Data Science and Machine Learning.
+- **Author:** Wrote the book *The Ghosts We Carry*.
+- **Creator:** Created BOGOODSKI.dev.
+- **Music:** DJs as DJ BOGOODSKI.
+
+## Primary links
+
+- [BOGOODSKI.dev](https://bogoodski.dev)
+- [The Ghosts We Carry](https://the-ghosts-we-carry.com/): site for his book
+- [bogoodski.com](https://bogoodski.com/): personal home page
+
+## Pages on this site
+
+- [Home](https://bogoodski.com/)
+- [Maui, 2023](https://bogoodski.com/maui.html): first-hand account of the August 2023 Lahaina wildfire and evacuation
+- [Original 2023 site](https://bogoodski.com/legacy/): the first version of this site, built almost entirely with ChatGPT
+
+## Profiles
+
+- [LinkedIn](https://www.linkedin.com/in/sbogucki12/)
+- [GitHub](https://github.com/sbogucki12)
+- [Medium](https://medium.com/@bogoodski)
+- [DJ BOGOODSKI on SoundCloud](https://soundcloud.com/djbogoodski)
