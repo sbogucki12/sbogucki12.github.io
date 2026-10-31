@@ -1,0 +1,227 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+// Content migrated from the 2023 site's resume modal (public/legacy/index.html),
+// updated for the current role and the completed Cornell ML certificate.
+// Experience is reverse-chronological by stint, so an employer can appear more than once.
+
+const competencies = [
+	'AI & machine learning strategy',
+	'Business intelligence & analytics',
+	'Enterprise data management',
+	'Systems modernization & acquisition',
+	'Aviation safety oversight (FAA AIR)',
+	'Federal security & compliance (ATO)',
+	'SAFe Agile delivery',
+	'Team leadership & hiring',
+];
+
+type Role = { title: string; dates: string; note?: string; points: string[] };
+type Stint = { org: string; dates: string; roles: Role[] };
+
+const experience: Stint[] = [
+	{
+		org: 'Federal Aviation Administration',
+		dates: '2021 – Present',
+		roles: [
+			{
+				title: 'Division Manager, Artificial Intelligence & Business Intelligence',
+				dates: 'Apr 2023 – Present',
+				points: [
+					'Lead a division of two branches delivering AI, business intelligence, and analytics enablement across the organization.',
+					'Build the enterprise data ontologies and digitized business processes that the agency’s analytics and AI run on.',
+				],
+			},
+			{
+				title: 'Acting Manager / Executive Support Staff',
+				dates: 'Jun 2021 – Apr 2023',
+				points: [
+					'Acting manager (detail) of the Executive Operations branch, leading program managers, data scientists, and business intelligence professionals.',
+					'Technical advisor to the executive leadership of the Aircraft Certification Service.',
+					'Technical lead on systems modernization, including a challenging acquisition of an advanced data analytics platform.',
+					'Lead or member of several enterprise-level data and advanced analytics teams; architected enterprise data management solutions.',
+				],
+			},
+		],
+	},
+	{
+		org: 'Yona-Brixtel, LLC',
+		dates: '2018 – 2021',
+		roles: [
+			{
+				title: 'Solutions Architect & Manager',
+				dates: 'Aug 2019 – Jun 2021',
+				points: [
+					'Managed a SAFe Agile cross-functional team: product owner, six full-stack developers, a database administrator, and a QA/QC tester.',
+					'Delivered a federal regulatory compliance tracking application to production and an external web portal supporting the aviation safety oversight mission.',
+					'Oversaw the Okta identity rollout for public users of a government system (OIDC, OAuth 2.0, SAML, PKCE) and led it through federal security assessments to Authority to Operate.',
+					'Coordinated between executive-level federal project management and field office users; interviewed and recommended hires for systems engineers, enterprise architects, and developers.',
+					'Guided the team through the transition from in-office to remote work during COVID.',
+				],
+			},
+			{
+				title: 'Software Engineer',
+				dates: 'Aug 2018 – Feb 2019',
+				points: [
+					'Built software with C#, JavaScript, HTML/CSS, SQL Server and T-SQL, Git, Postman, and Azure.',
+				],
+			},
+		],
+	},
+	{
+		org: 'Federal Aviation Administration',
+		dates: '2010 – 2017',
+		roles: [
+			{
+				title: 'Manager, Data Analyst, Web Developer',
+				dates: 'Sep 2010 – Jun 2017',
+				points: [
+					'Supervised a team of roughly 15 technical support employees in a federal office.',
+					'Managed the office’s designee engineer program: members of the public delegated aviation safety oversight responsibilities by the FAA.',
+					'Led the office metrics program supporting its ISO 9001 Quality Management System.',
+					'SharePoint site owner; used C# to maintain public-facing and intranet content in an in-house CMS.',
+					'Deep working knowledge of FAA AIR business processes: continued operational safety, type certification, production oversight, SMS, QMS, 14 CFR Part 193, compliance and enforcement, delegation, and integrated oversight.',
+				],
+			},
+		],
+	},
+	{
+		org: 'United States Army',
+		dates: '2001 – 2005',
+		roles: [
+			{
+				title: 'Sergeant (13F20), 3rd Infantry Division',
+				dates: 'Apr 2001 – Oct 2005',
+				points: [
+					'Promoted to Sergeant in the shortest time allowed by policy (24 months).',
+					'Led a fire team in combat before age 21.',
+					'Maintained the unit’s communications inventory in a combat environment, including safeguarding cryptographic material and keeping voice and data transmissions time-synced.',
+				],
+			},
+		],
+	},
+];
+
+const certificates = [
+	{ name: 'Machine Learning', issuer: 'Cornell University', dates: '2023' },
+	{ name: 'Python for Data Science', issuer: 'Cornell University', dates: '2022 – 2023' },
+	{ name: 'Data Management Fundamentals', issuer: 'DATAVERSITY' },
+	{ name: 'Full-Stack Web Development', issuer: 'Redwood Code Academy', dates: '2017' },
+	{ name: 'Microsoft Access VBA', issuer: 'Skillsoft' },
+];
+
+const sectionHeading = 'text-xs font-medium uppercase tracking-[0.2em] text-zinc-500';
+// Dates: muted, tabular figures so ranges line up; right-aligned beside titles from sm up.
+const dateText = 'shrink-0 text-sm tabular-nums text-zinc-500';
+const bullet = "pl-4 -indent-4 before:mr-2 before:text-zinc-600 before:content-['–']";
+---
+
+<MainLayout
+	title="Resume | Steve Bogucki"
+	description="Resume of Steve Bogucki: Division Manager of AI & Business Intelligence at the FAA, Cornell-certified in machine learning and data science, U.S. Army veteran."
+>
+	<article class="mx-auto max-w-3xl">
+		<header class="border-b border-zinc-800/80 pb-10">
+			<p class={sectionHeading}>Resume</p>
+			<h1 class="mt-4 text-4xl font-semibold tracking-tight text-zinc-50 sm:text-5xl">Steve Bogucki</h1>
+			<p class="mt-3 text-lg text-zinc-300">Division Manager, AI &amp; Business Intelligence · Federal Aviation Administration</p>
+			<p class="mt-6 max-w-2xl leading-relaxed text-pretty text-zinc-400">
+				Technology leader who came up through web development and data science and now runs an AI and
+				analytics organization inside a federal safety agency. I pair hands-on technical depth with the
+				regulatory and operational knowledge to put data to work where the stakes are real.
+			</p>
+			<ul class="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-sm" aria-label="Profiles">
+				{[
+					{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/sbogucki12/' },
+					{ label: 'GitHub', href: 'https://github.com/sbogucki12' },
+					{ label: 'BOGOODSKI.dev', href: 'https://bogoodski.dev' },
+				].map(({ label, href }) => (
+					<li>
+						<a
+							href={href}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="rounded-sm text-zinc-300 underline decoration-zinc-700 underline-offset-4 transition-colors hover:text-white hover:decoration-zinc-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400"
+						>
+							{label}<span aria-hidden="true" class="ml-1 text-xs text-zinc-500">↗</span><span class="sr-only"> (opens in a new tab)</span>
+						</a>
+					</li>
+				))}
+			</ul>
+		</header>
+
+		<section aria-labelledby="competencies-heading" class="border-b border-zinc-800/80 py-10">
+			<h2 id="competencies-heading" class={sectionHeading}>Core competencies</h2>
+			<ul class="mt-5 grid gap-x-8 gap-y-2.5 text-sm text-zinc-300 sm:grid-cols-2">
+				{competencies.map((c) => (
+					<li class="flex items-center gap-2.5">
+						<span aria-hidden="true" class="size-1 shrink-0 rounded-full bg-zinc-500"></span>
+						{c}
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<section aria-labelledby="experience-heading" class="border-b border-zinc-800/80 py-10">
+			<h2 id="experience-heading" class={sectionHeading}>Experience</h2>
+			<div class="mt-6 space-y-12">
+				{experience.map(({ org, dates: stintDates, roles }) => (
+					<section aria-label={`${org}, ${stintDates}`}>
+						<div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+							<h3 class="text-xl font-semibold tracking-tight text-zinc-50">{org}</h3>
+							<p class:list={[dateText, 'text-xs uppercase tracking-wider text-zinc-600']}>{stintDates}</p>
+						</div>
+						<ol class="mt-5 space-y-7 border-l border-zinc-800 pl-6">
+							{roles.map(({ title, dates, note, points }) => (
+								<li class="relative">
+									<span aria-hidden="true" class="absolute -left-[1.6rem] top-2 size-2 rounded-full border border-zinc-600 bg-zinc-950"></span>
+									<div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+										<h4 class="font-medium text-zinc-100">
+											{title}
+											{note && <span class="ml-3 text-xs font-normal uppercase tracking-wider text-zinc-500">{note}</span>}
+										</h4>
+										<p class={dateText}>{dates}</p>
+									</div>
+									<ul class="mt-2.5 space-y-2 text-sm leading-relaxed text-zinc-400">
+										{points.map((p) => <li class={bullet}>{p}</li>)}
+									</ul>
+								</li>
+							))}
+						</ol>
+					</section>
+				))}
+			</div>
+		</section>
+
+		<section aria-labelledby="education-heading" class="border-b border-zinc-800/80 py-10">
+			<h2 id="education-heading" class={sectionHeading}>Education</h2>
+			<div class="mt-6">
+				<div class="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+					<h3 class="text-xl font-semibold tracking-tight text-zinc-50">University of South Florida</h3>
+					<p class={dateText}>2009</p>
+				</div>
+				<p class="mt-1 text-zinc-300">B.A., International Studies &amp; Religious Studies (dual major) · Honors College</p>
+				<ul class="mt-3 space-y-2 text-sm leading-relaxed text-zinc-400">
+					<li class={bullet}>Magna Cum Laude, GPA above 3.8</li>
+					<li class={bullet}>Senior thesis on genocide prevention</li>
+					<li class={bullet}>Language study: Arabic, Hebrew, Russian</li>
+				</ul>
+			</div>
+		</section>
+
+		<section aria-labelledby="certs-heading" class="py-10">
+			<h2 id="certs-heading" class={sectionHeading}>Certificates &amp; training</h2>
+			<ul class="mt-6 divide-y divide-zinc-800/80 text-sm">
+				{certificates.map(({ name, issuer, dates }) => (
+					<li class="flex flex-col gap-1 py-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6">
+						<p class="font-medium text-zinc-100">
+							{name}
+							<span class="mt-0.5 block font-normal text-zinc-500">{issuer}</span>
+						</p>
+						{dates && <p class={dateText}>{dates}</p>}
+					</li>
+				))}
+			</ul>
+		</section>
+	</article>
+</MainLayout>

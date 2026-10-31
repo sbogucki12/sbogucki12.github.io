@@ -22,13 +22,17 @@ export default function ItineraryViewer({
 	const [view, setView] = useState('summary');
 	const baseId = useId();
 
-	// Arrow keys move between tabs (WAI-ARIA tabs pattern).
+	// Arrow/Home/End keys move between tabs (WAI-ARIA tabs pattern). Enter and Space
+	// activate a tab natively because each tab is a <button>.
 	function handleKeyDown(event) {
-		if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
-		event.preventDefault();
 		const index = VIEWS.findIndex((v) => v.id === view);
-		const step = event.key === 'ArrowRight' ? 1 : -1;
-		const next = VIEWS[(index + step + VIEWS.length) % VIEWS.length];
+		let next;
+		if (event.key === 'ArrowRight') next = VIEWS[(index + 1) % VIEWS.length];
+		else if (event.key === 'ArrowLeft') next = VIEWS[(index - 1 + VIEWS.length) % VIEWS.length];
+		else if (event.key === 'Home') next = VIEWS[0];
+		else if (event.key === 'End') next = VIEWS[VIEWS.length - 1];
+		else return;
+		event.preventDefault();
 		setView(next.id);
 		document.getElementById(`${baseId}-tab-${next.id}`)?.focus();
 	}
@@ -72,13 +76,15 @@ export default function ItineraryViewer({
 				</div>
 			</div>
 
-			{view === 'summary' ? (
-				<div
-					id={`${baseId}-panel-summary`}
-					role="tabpanel"
-					aria-labelledby={`${baseId}-tab-summary`}
-					className="px-5 py-6 sm:px-6"
-				>
+			{/* Both panels stay in the DOM so each tab's aria-controls always resolves. */}
+			<div
+				id={`${baseId}-panel-summary`}
+				role="tabpanel"
+				aria-labelledby={`${baseId}-tab-summary`}
+				hidden={view !== 'summary'}
+				tabIndex={0}
+				className="px-5 py-6 sm:px-6 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-zinc-400"
+			>
 					<p className="max-w-prose text-sm leading-relaxed text-zinc-400">{summary}</p>
 					<dl className="mt-6 grid gap-3 sm:grid-cols-3">
 						{highlights.map(({ label, value }) => (
@@ -88,14 +94,20 @@ export default function ItineraryViewer({
 							</div>
 						))}
 					</dl>
-				</div>
-			) : (
-				<div
-					id={`${baseId}-panel-itinerary`}
-					role="tabpanel"
-					aria-labelledby={`${baseId}-tab-itinerary`}
-					className="flex flex-col items-start gap-4 px-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6"
-				>
+			</div>
+			<div
+				id={`${baseId}-panel-itinerary`}
+				role="tabpanel"
+				aria-labelledby={`${baseId}-tab-itinerary`}
+				hidden={view !== 'itinerary'}
+				tabIndex={0}
+				className={[
+					// `flex` would override the hidden attribute, so apply it only when visible.
+					view === 'itinerary' ? 'flex' : 'hidden',
+					'flex-col items-start gap-4 px-5 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6',
+					'focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-zinc-400',
+				].join(' ')}
+			>
 					<div>
 						<p className="text-sm font-medium text-zinc-100">Full itinerary (PDF)</p>
 						<p className="mt-1 text-sm text-zinc-500">
@@ -117,8 +129,7 @@ export default function ItineraryViewer({
 					) : (
 						<p className="text-sm text-zinc-500">Itinerary coming soon.</p>
 					)}
-				</div>
-			)}
+			</div>
 		</div>
 	);
 }

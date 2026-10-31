@@ -6,15 +6,21 @@ import MainLayout from '../layouts/MainLayout.astro';
 const tile =
 	'group relative isolate flex flex-col overflow-hidden rounded-2xl border border-zinc-800/80';
 const pad = 'p-6 sm:p-7';
-const interactive = [
+// `glow` is the hover treatment without movement, for tiles that contain links
+// rather than being one (the DJ hub). `interactive` adds the lift for whole-tile links.
+const glow = [
 	'transition duration-300 ease-out',
-	'hover:-translate-y-0.5 hover:border-zinc-600/80 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
-	'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400',
-	'motion-reduce:transition-none motion-reduce:hover:translate-y-0',
+	'hover:border-zinc-600/80 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
+	'motion-reduce:transition-none',
 	// Sheen: a faint light along the top edge that fades in on hover.
 	'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:-z-10 before:h-px',
 	'before:bg-gradient-to-r before:from-transparent before:via-zinc-400/50 before:to-transparent',
 	'before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100',
+].join(' ');
+const interactive = [
+	glow,
+	'hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
+	'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400',
 ].join(' ');
 const arrow =
 	'inline-block transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 motion-reduce:transition-none';
@@ -29,6 +35,38 @@ const eqBars = [
 	{ h: 'h-4', delay: '[animation-delay:-0.45s]' },
 	{ h: 'h-8', delay: '[animation-delay:-0.2s]' },
 ];
+
+// DJ hub: focus ring for links inside the card, and stroke-style icons (24x24) to
+// match the runner icon. Each icon is a list of path `d` strings.
+const djFocus =
+	'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-300';
+const instagramIcon = [
+	'M7 2.5h10A4.5 4.5 0 0 1 21.5 7v10a4.5 4.5 0 0 1-4.5 4.5H7A4.5 4.5 0 0 1 2.5 17V7A4.5 4.5 0 0 1 7 2.5z',
+	'M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0z',
+	'M17.5 6.5h.01',
+];
+const djSocials = [
+	{
+		label: 'TikTok',
+		href: 'https://www.tiktok.com/@bogoodski',
+		icon: ['M15 3v11.5a4.5 4.5 0 1 1-4.5-4.5', 'M15 3a5 5 0 0 0 5 5'],
+	},
+	{
+		label: 'Twitch',
+		href: 'https://www.twitch.tv/bogoodski',
+		icon: ['M4 3h16v11l-5 5h-4l-3 3v-3H4z', 'M11 7.5v4', 'M16 7.5v4'],
+	},
+	{
+		label: 'Instagram',
+		href: 'https://www.instagram.com/djbogoodski/',
+		icon: instagramIcon,
+	},
+];
+
+// Running hub: same structure as the DJ hub, in the card's slate palette.
+const runFocus =
+	'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-300';
+const stravaIcon = ['M4 16l5.5-11 5.5 11', 'M12 16l3 6 3-6'];
 ---
 
 <MainLayout title="Steve Bogucki | Technologist, Author, Builder">
@@ -134,14 +172,13 @@ const eqBars = [
 		</a>
 
 		<!-- Endurance Running -->
-		<a
-			href="https://www.strava.com/athletes/31841889"
-			target="_blank"
-			rel="noopener noreferrer"
-			class:list={[tile, pad, interactive, 'bg-gradient-to-br from-slate-900 via-zinc-900 to-zinc-950']}
+		<!-- A hub, not a single link: glow on hover but no lift (see `glow`). -->
+		<section
+			aria-labelledby="run-heading"
+			class:list={[tile, pad, glow, 'bg-gradient-to-br from-slate-900 via-zinc-900 to-zinc-950']}
 		>
 			<div class="flex items-start justify-between">
-				<p class:list={[eyebrow, 'text-slate-400']}>Endurance</p>
+				<h2 id="run-heading" class:list={[eyebrow, 'text-slate-400']}>Endurance</h2>
 				<!-- Runner icon -->
 				<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="size-6 text-slate-400 transition-colors group-hover:text-slate-200">
 					<circle cx="14.5" cy="4" r="1.75" />
@@ -164,29 +201,62 @@ const eqBars = [
 				<path d="M0 30 C 20 30, 25 12, 45 14 S 70 32, 90 26 S 115 8, 135 12 S 165 30, 200 18" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.5" class="text-zinc-700/70" vector-effect="non-scaling-stroke" />
 				<path d="M0 30 C 20 30, 25 12, 45 14 S 70 32, 90 26 S 115 8, 135 12 S 165 30, 200 18" pathLength="1" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="0.18 0.82" class="animate-trace text-slate-300 motion-reduce:animate-none" vector-effect="non-scaling-stroke" />
 			</svg>
+
+				<!-- Primary CTA -->
+				<a
+					href="https://www.instagram.com/bogoodskiruns/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class:list={['group/cta mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-white px-4 py-2.5 text-sm font-semibold text-slate-950 shadow-[0_8px_24px_-10px_rgba(148,163,184,0.5)] transition-colors hover:bg-slate-200 active:bg-slate-300', runFocus]}
+				>
+					<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0">
+						{instagramIcon.map((d) => <path d={d} />)}
+					</svg>
+					Follow on Instagram
+					<span aria-hidden="true" class="inline-block transition-transform duration-300 ease-out group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5 motion-reduce:transition-none">↗</span>
+					<span class="sr-only">(@bogoodskiruns, opens in a new tab)</span>
+				</a>
+
+				<!-- Secondary -->
+				<a
+					href="https://www.strava.com/athletes/31841889"
+					target="_blank"
+					rel="noopener noreferrer"
+					class:list={['mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-slate-700/60 bg-white/5 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:border-slate-500/70 hover:bg-white/10 hover:text-white', runFocus]}
+				>
+					<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0">
+						{stravaIcon.map((d) => <path d={d} />)}
+					</svg>
+					Strava
+					<span class="sr-only">(running profile, opens in a new tab)</span>
+				</a>
+
+				<!-- Legacy run log. Needs www: the bare domain does not resolve. -->
+				<a
+					href="https://www.dailyrun.net/"
+					target="_blank"
+					rel="noopener noreferrer"
+					class:list={['mt-4 inline-block rounded-sm text-xs text-slate-400/50 underline-offset-2 transition-colors hover:text-slate-300 hover:underline', runFocus]}
+				>
+					Legacy run log <span aria-hidden="true">↗</span><span class="sr-only">(DailyRun, opens in a new tab)</span>
+				</a>
 			</div>
-			<span class="sr-only">Follow on Strava (opens in a new tab)</span>
-		</a>
+		</section>
 
 		<!-- DJ BOGOODSKI -->
-		<a
-			href="https://soundcloud.com/djbogoodski"
-			target="_blank"
-			rel="noopener noreferrer"
-			class:list={[tile, pad, interactive, 'border-indigo-900/50 bg-gradient-to-br from-purple-950 via-indigo-950 to-zinc-950 hover:border-indigo-700/60']}
+		<!-- A hub, not a single link: a <section> so the links inside it are valid (no nested <a>). -->
+		<section
+			aria-labelledby="dj-heading"
+			class:list={[tile, pad, glow, 'border-indigo-900/50 bg-gradient-to-br from-purple-950 via-indigo-950 to-zinc-950 hover:border-indigo-700/60']}
 		>
 			<div
 				aria-hidden="true"
 				class="pointer-events-none absolute -bottom-20 -left-16 -z-10 size-56 rounded-full bg-purple-700/20 opacity-60 blur-3xl transition-opacity duration-500 group-hover:opacity-100"
 			></div>
-			<p class:list={[eyebrow, 'text-indigo-300/80']}>After hours</p>
-			<h2 class="mt-4 text-lg font-semibold tracking-[0.08em] text-zinc-50">DJ BOGOODSKI</h2>
-			<p class="mt-2 text-sm leading-relaxed text-indigo-100/70">
-				Progressive house and melodic techno, mixed live and streamed.
-			</p>
 
-			<div class="mt-auto flex items-end justify-between gap-4 pt-6">
-				<!-- Equalizer: idle until hover. -->
+			<div class="flex items-start justify-between gap-4">
+				<p class:list={[eyebrow, 'text-indigo-300/80']}>After hours</p>
+				<!-- Equalizer: idle until the card is hovered. -->
 				<div aria-hidden="true" class="flex h-10 items-end gap-1">
 					{eqBars.map(({ h, delay }) => (
 						<span
@@ -199,12 +269,56 @@ const eqBars = [
 						></span>
 					))}
 				</div>
-				<span class="inline-flex items-center gap-1.5 text-sm font-medium text-indigo-100">
-					SoundCloud <span aria-hidden="true" class={arrow}>↗</span>
-				</span>
 			</div>
-			<span class="sr-only">(opens in a new tab)</span>
-		</a>
+			<h2 id="dj-heading" class="mt-2 text-lg font-semibold tracking-[0.08em] text-zinc-50">DJ BOGOODSKI</h2>
+			<p class="mt-2 text-sm leading-relaxed text-indigo-100/70">
+				Progressive house and melodic techno, mixed live and streamed.
+			</p>
+
+			<div class="mt-auto pt-6">
+				<!-- Primary CTA -->
+				<a
+					href="https://soundcloud.com/djbogoodski"
+					target="_blank"
+					rel="noopener noreferrer"
+					class:list={['group/cta flex w-full items-center justify-center gap-1.5 rounded-md bg-white px-4 py-2.5 text-sm font-semibold text-indigo-950 shadow-[0_8px_24px_-10px_rgba(167,139,250,0.6)] transition-colors hover:bg-indigo-100 active:bg-indigo-200', djFocus]}
+				>
+					Listen on SoundCloud
+					<span aria-hidden="true" class="inline-block transition-transform duration-300 ease-out group-hover/cta:translate-x-0.5 group-hover/cta:-translate-y-0.5 motion-reduce:transition-none">↗</span>
+					<span class="sr-only">(DJ BOGOODSKI, opens in a new tab)</span>
+				</a>
+
+				<!-- Secondary links -->
+				<ul class="mt-3 grid grid-cols-3 gap-2" aria-label="DJ BOGOODSKI elsewhere">
+					{djSocials.map(({ label, href, icon }) => (
+						<li>
+							<a
+								href={href}
+								target="_blank"
+								rel="noopener noreferrer"
+								class:list={['flex items-center justify-center gap-1.5 rounded-md border border-indigo-800/50 bg-white/5 px-2 py-2 text-xs font-medium text-indigo-100/80 transition-colors hover:border-indigo-500/60 hover:bg-white/10 hover:text-white', djFocus]}
+							>
+								<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0">
+									{icon.map((d) => <path d={d} />)}
+								</svg>
+								{label}
+								<span class="sr-only">(DJ BOGOODSKI, opens in a new tab)</span>
+							</a>
+						</li>
+					))}
+				</ul>
+
+				<!-- Legacy archive -->
+				<a
+					href="https://djbogoodski.azurewebsites.net/home"
+					target="_blank"
+					rel="noopener noreferrer"
+					class:list={['mt-4 inline-block rounded-sm text-xs text-indigo-200/40 underline-offset-2 transition-colors hover:text-indigo-200/70 hover:underline', djFocus]}
+				>
+					Legacy site archive <span aria-hidden="true">↗</span><span class="sr-only">(DJ BOGOODSKI, opens in a new tab)</span>
+				</a>
+			</div>
+		</section>
 
 		<!-- Adventures & Travel -->
 		<section

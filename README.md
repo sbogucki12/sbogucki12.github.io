@@ -5,7 +5,7 @@ This repository houses the modern iteration of my personal digital hub, rebuilt 
 ## Architectural Philosophy: The Symbiotic AI Workflow
 
 This project is a demonstration of modern AI-assisted software engineering. Rather than treating AI as a glorified autocomplete, this site was built using a **symbiotic orchestration model**:
-*   **Strategic Architect (Gemini):** Utilized for high-level system design, framework selection, AI observability structuring (JSON-LD, `llms.txt`), and security auditing.
+*   **Strategic Architect (Gemini):** Utilized for high-level system design, framework selection, AI observability structuring (JSON-LD, `llms.txt`), UX/UI behavioral logic, and security auditing.
 *   **Local Executor (Claude Code):** Embedded directly in the VS Code terminal with full filesystem access to execute scaffolding, refactoring, and CSS Grid implementations based on precise architectural prompts.
 *   **Human Orchestrator (Me):** Guiding the aesthetic vision, enforcing security boundaries, defining the routing logic, and validating the final integrations.
 
