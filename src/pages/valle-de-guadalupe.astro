@@ -1,184 +1,493 @@
 ---
+import { getImage } from 'astro:assets';
 import MainLayout from '../layouts/MainLayout.astro';
-import ItineraryViewer from '../components/ItineraryViewer.jsx';
+import StoryFigure from '../components/story/StoryFigure.astro';
+import StoryLink from '../components/story/StoryLink.astro';
+import StoryLightbox from '../components/story/StoryLightbox.astro';
+import StoryProgress from '../components/story/StoryProgress.astro';
 
-// Placeholder: drop the real PDF at public/downloads/ with this name.
+import p01 from '../assets/stories/valle-de-guadalupe/01-hero-valley-sunset.jpg';
+import p02 from '../assets/stories/valle-de-guadalupe/02-border-pedeast.jpg';
+import p03 from '../assets/stories/valle-de-guadalupe/03-banyan-tree-veya-collage.jpg';
+import p04 from '../assets/stories/valle-de-guadalupe/04-veya-harmony-villa-collage.jpg';
+import p05 from '../assets/stories/valle-de-guadalupe/05-veya-fire-pool.jpg';
+import p06 from '../assets/stories/valle-de-guadalupe/06-veya-landscape-vines.jpg';
+import p07 from '../assets/stories/valle-de-guadalupe/07-deckmans-collage.jpg';
+import p08 from '../assets/stories/valle-de-guadalupe/08-deckmans-vineyard-sunset.jpg';
+import p09 from '../assets/stories/valle-de-guadalupe/09-fauna-collage.png';
+import p10 from '../assets/stories/valle-de-guadalupe/10-adobe-guadalupe.jpg';
+import p11 from '../assets/stories/valle-de-guadalupe/11-vena-cava-hulls.jpg';
+import p12 from '../assets/stories/valle-de-guadalupe/12-vena-cava-barrels.jpg';
+import p13 from '../assets/stories/valle-de-guadalupe/13-vena-cava-bottle.jpg';
+import p14 from '../assets/stories/valle-de-guadalupe/14-vena-cava-collage.png';
+import p15 from '../assets/stories/valle-de-guadalupe/15-frida-dia-de-muertos-truck.jpg';
+import p16 from '../assets/stories/valle-de-guadalupe/16-steve-melissa-frida.jpg';
+
+const TITLE = 'Valle de Guadalupe, on a Monday | BOGOODSKI';
+const HEADLINE = 'Valle de Guadalupe, on a Monday';
+const DEK = 'Three nights in Baja wine country, planned by an AI agent, guided by a friend named Elias.';
+const DESCRIPTION =
+	'Three nights in Baja wine country: walking across the border at San Ysidro, a villa at Banyan Tree Veya, dinners at Deckman’s and Fauna, three wineries, and our full itinerary.';
+const PUBLISHED = '2026-11-01';
 const ITINERARY_PDF = '/downloads/valle-de-guadalupe-itinerary.pdf';
 
-// Placeholder gallery slots. Replace each entry with { src, alt, width, height }
-// once photos are ready; the aspect ratios here just give the masonry layout shape.
-const gallery = [
-	{ aspect: 'aspect-[4/5]', label: 'Banyan Tree Veya' },
-	{ aspect: 'aspect-[3/2]', label: 'Vineyards' },
-	{ aspect: 'aspect-square', label: 'Fauna' },
-	{ aspect: 'aspect-[2/3]', label: 'Golden hour' },
-	{ aspect: 'aspect-[3/2]', label: 'Deckman’s' },
-	{ aspect: 'aspect-[4/5]', label: 'The valley' },
-	{ aspect: 'aspect-[16/9]', label: 'Tasting room' },
-	{ aspect: 'aspect-[3/4]', label: 'Fire and smoke' },
-	{ aspect: 'aspect-square', label: 'Last morning' },
+// Outbound links, placed at each name's first mention in the narration.
+// A blank value renders the name as plain text, so nothing ships as a dead link.
+// Paste URLs exactly as given: no tracking or affiliate parameters.
+const links = {
+	sanYsidro:
+		'https://www.gsa.gov/about-us/regions/region-9-pacific-rim/region-9-newsroom/feature-stories/gsa-opens-san-ysidro-lpoes-new-pedestrianprocessing-facility-08272018',
+	banyanTreeVeya: 'https://www.banyantree.com/veya/mexico/valle-de-guadalupe',
+	michelin2026:
+		'https://www.elimparcial.com/tij/ensenada/2026/05/22/valle-de-guadalupe-brilla-en-la-guia-michelin-con-cinco-restaurantes-galardonados/',
+	mexicoStars: 'https://en.wikipedia.org/wiki/List_of_Michelin-starred_restaurants_in_Mexico',
+	bajaStars: 'https://grupoanimal.mx/gastronomia/recetas/restaurantes-baja-california-con-estrella-michelin',
+	deckmans: 'https://www.bajabound.com/bajaadventures/deckmans',
+	michelinGreenStar:
+		'https://guide.michelin.com/us/en/article/michelin-guide-ceremony/michelin-guide-mexico-stars-green-stars-sustainability',
+	fauna: 'https://www.theworlds50best.com/discovery/Establishments/Mexico/Valle-de-Guadalupe/Fauna.html',
+	latam50Best: 'https://www.the50.com/discovery/Establishments/Mexico/Valle-de-Guadalupe/Fauna.html',
+	veyaDining: 'https://www.banyantree.com/veya/mexico/valle-de-guadalupe/dining',
+	adobeGuadalupe: 'https://www.bajabound.com/destinations/bajawinecountry/adobeguadalupe',
+	venaCava: 'https://www.venacavawine.com/',
+	venaCavaHulls: 'https://pleasethepalate.com/finding-a-home-in-baja-california-eileen-and-phil-gregory-vena-cava/',
+	caWineLimit: 'https://www.abc.ca.gov/importing-alcoholic-beverages-for-personal-or-household-use',
+	ab2751: 'https://www.uniradiobaja.com/sociedad/california-permitira-ingresar-seis-litros-vino-mexico-partir-2027-n908861',
+	valleWiki: 'https://en.wikipedia.org/wiki/Valle_de_Guadalupe',
+	donaEsthela: 'https://guide.michelin.com/us/en/article/features/dona-esthela-mexico-breakfast-michelin-guide',
+	donaEsthelaWiki: 'https://en.wikipedia.org/wiki/La_Cocina_de_Do%C3%B1a_Esthela',
+};
+
+const photos = {
+	p01: { src: p01, alt: 'The sun setting over vineyards and hills in Valle de Guadalupe.' },
+	p02: { src: p02, alt: 'The pedestrian entrance into Mexico at San Ysidro: a concrete wall topped with razor wire and a sign that reads MEXICO.' },
+	p03: { src: p03, alt: 'Collage from Banyan Tree Veya: Melissa at breakfast on a terrace, the villa terrace, a lounge with a hanging fireplace, and Steve looking out over the valley.' },
+	p04: { src: p04, alt: 'Collage of the Harmony Sunset Pool Villa at Banyan Tree Veya: the terrace and vineyard view, the bedroom windows, the living area, and the bathroom.' },
+	p05: { src: p05, alt: 'A fire pit burning beside the lit plunge pool outside the villa at night, with vines and distant lights beyond.' },
+	p06: { src: p06, alt: 'Panoramic view of young vines, farmland, and mountains across the valley under a clear blue sky.' },
+	p07: { src: p07, alt: 'Collage from Deckman’s en el Mogor: a vineyard at sunset, bread and rosé, oysters, a salad, a sliced ribeye, and the open-air dining room.' },
+	p08: { src: p08, alt: 'Sunset over the vineyard rows at El Mogor, with a dirt path along the edge.' },
+	p09: { src: p09, alt: 'Collage from Fauna: a cocktail with a grapefruit garnish, small plates, a main course in sauce, dessert, drinks, a Polaroid, and the dining room.' },
+	p10: { src: p10, alt: 'Adobe Guadalupe’s white tower with a blue dome and tile-roofed buildings, behind rows of vines and palm trees.' },
+	p11: { src: p11, alt: 'Vena Cava’s buildings, roofed with upturned boat hulls, behind walls of stacked, painted crates.' },
+	p12: { src: p12, alt: 'Wine barrels in Vena Cava’s cellar, with a glass-topped tasting table set on a barrel full of corks.' },
+	p13: { src: p13, alt: 'A bottle of Vena Cava Sauvignon Blanc on the tasting table, with barrels behind it.' },
+	p14: { src: p14, alt: 'Collage from Vena Cava: the boat-hull buildings, barrels stacked in the cellar, the tasting table, and bottles including Crystal Ship and Sauvignon Blanc.' },
+	p15: { src: p15, alt: 'An antique pickup truck painted with a Catrina face and roses for Día de Muertos, next to a signpost that points to wine tasting.' },
+	p16: { src: p16, alt: 'Steve and Melissa under an arch of marigolds and Día de Muertos decorations.' },
+};
+
+const chapters = [
+	{ id: 'planning', title: 'The Agent Booked It' },
+	{ id: 'border', title: 'The Line' },
+	{ id: 'villa', title: 'Harmony' },
+	{ id: 'deckmans', title: 'Fire and Stone' },
+	{ id: 'fauna', title: 'Una Experiencia Gastronómica' },
+	{ id: 'wineries', title: 'Vinícolas' },
+	{ id: 'field-notes', title: 'Field Notes' },
+	{ id: 'next-time', title: 'Next Time' },
+	{ id: 'colophon', title: 'How This Page Was Made', meta: true },
 ];
+const chapterTitle = Object.fromEntries(chapters.map((c) => [c.id, c.title]));
+
+// Open Graph image: photo 05, the fire pit and plunge pool at night.
+const og = await getImage({ src: p05, width: 1200, format: 'jpg', quality: 80 });
+const siteUrl = (Astro.site ?? new URL('https://bogoodski.com')).href.replace(/\/$/, '');
+const pageUrl = `${siteUrl}/valle-de-guadalupe/`;
+const ogImageUrl = new URL(og.src, siteUrl).href;
+
+const articleLd = {
+	'@context': 'https://schema.org',
+	'@type': 'Article',
+	'@id': `${pageUrl}#article`,
+	headline: HEADLINE,
+	alternativeHeadline: DEK,
+	description: DESCRIPTION,
+	image: [ogImageUrl],
+	datePublished: PUBLISHED,
+	dateModified: PUBLISHED,
+	author: { '@type': 'Person', '@id': `${siteUrl}/#person`, name: 'Steve Bogucki', url: `${siteUrl}/` },
+	publisher: { '@type': 'Person', '@id': `${siteUrl}/#person`, name: 'Steve Bogucki' },
+	isPartOf: { '@id': `${siteUrl}/#website` },
+	mainEntityOfPage: { '@type': 'WebPage', '@id': pageUrl },
+	inLanguage: 'en',
+	timeRequired: 'PT9M',
+	articleSection: 'Travel',
+	contentLocation: {
+		'@type': 'Place',
+		name: 'Valle de Guadalupe, Baja California, Mexico',
+	},
+};
+
+// Shared prose styles.
+const h2 = 'scroll-mt-32 text-2xl font-semibold tracking-tight text-balance text-zinc-50 sm:text-3xl';
+const section = 'scroll-mt-32 flow-root space-y-5';
+const pdfLink =
+	'rounded-sm text-zinc-100 underline decoration-zinc-600 underline-offset-4 transition-colors hover:text-white hover:decoration-zinc-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400';
 ---
 
 <MainLayout
-	title="Valle de Guadalupe | Steve Bogucki"
-	description="Notes from an October 2026 trip to Valle de Guadalupe: Banyan Tree Veya, Fauna, and Deckman’s."
+	title={TITLE}
+	description={DESCRIPTION}
+	ogImage={og.src}
+	ogImageAlt={photos.p05.alt}
+	ogType="article"
 >
-	<!-- PLACEHOLDER STORY: replace all narrative copy below with the real write-up. -->
+	<script slot="head" is:inline type="application/ld+json" set:html={JSON.stringify(articleLd)} />
+
 	<article class="mx-auto max-w-3xl">
-		<header class="pb-12">
+		<header class="pb-10">
 			<p class="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">
 				Travel · Baja California, Mexico
 			</p>
 			<h1 class="mt-5 text-4xl font-semibold tracking-tight text-balance text-zinc-50 sm:text-5xl">
-				Valle de Guadalupe
+				{HEADLINE}
 			</h1>
-			<p class="mt-5 text-lg leading-relaxed text-pretty text-zinc-400">
-				A few days in Mexico’s wine country, organized around a place to stay and two dinners worth
-				the drive.
-			</p>
-			<p class="mt-6 text-sm text-zinc-500">
-				<time datetime="2026-10">October 2026</time>
+			<p class="mt-5 text-lg leading-relaxed text-pretty text-zinc-400 sm:text-xl">{DEK}</p>
+			<p class="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-zinc-500">
+				<span class="text-zinc-300">By Steve Bogucki</span>
+				<span aria-hidden="true" class="text-zinc-700">·</span>
+				<time datetime={PUBLISHED}>November 1, 2026</time>
+				<span aria-hidden="true" class="text-zinc-700">·</span>
+				<span>9 min read</span>
 			</p>
 		</header>
 
-		<figure class="mb-16">
-			<div
-				class="flex aspect-[16/9] w-full items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600"
+		<StoryFigure layout="hero" images={[photos.p01]} />
+
+		<div data-story-body class="space-y-16 text-base leading-relaxed text-zinc-300 sm:text-[1.0625rem] sm:leading-8">
+			<section id="planning" data-chapter aria-labelledby="planning-title" class={section}>
+				<h2 id="planning-title" class={h2}>{chapterTitle.planning}</h2>
+				<p>We didn’t plan this trip so much as delegate it.</p>
+				<p>
+					Melissa and I knew what we wanted: rest, serious food, good wine, and nobody behind the wheel
+					after the second tasting. I started the way I start most problems at work now. I threw it at
+					several AI models and compared what came back. In the end a ChatGPT agent did most of the
+					work. It emailed the hotel concierge. It went back and forth with restaurants and with the
+					wineries, the vinícolas, a word I now say with more confidence than accuracy. It lined up a
+					driver for the border and for every day after.
+				</p>
+				<p>
+					Trust, but verify. I checked every booking the agent made against reviews, forums and travel
+					reports. I found grumbling about the logistics of getting to the Valle. I found nothing that
+					worried me about where we would sleep or what we would eat.
+				</p>
+				<p>
+					If you want to copy the whole plan, here it is:
+					{' '}<a href={ITINERARY_PDF} target="_blank" rel="noopener noreferrer" class={pdfLink}
+						>Our full itinerary (PDF)<span class="sr-only"> (opens in a new tab)</span></a
+					>.
+				</p>
+			</section>
+
+			<section id="border" data-chapter aria-labelledby="border-title" class={section}>
+				<h2 id="border-title" class={h2}>{chapterTitle.border}</h2>
+				<StoryFigure layout="inset" images={[photos.p02]} />
+				<p>
+					We drove down from Orange County on a Monday morning and parked on the American side at
+					{' '}<StoryLink href={links.sanYsidro}>San Ysidro</StoryLink>. Then we walked. The PedEast crossing
+					looks like the opening shot of a movie that ends badly: concrete, steel, turnstiles, a long gray
+					corridor with no reason to linger. It took minutes. No line, nothing worth remembering, and
+					then we were in Tijuana, blinking at a pharmacy sign.
+				</p>
+				<p>Elias was already there. Not almost there. There.</p>
+				<p>“Steve? Melissa? Bienvenidos.”</p>
+				<p>
+					The drive south was easy. New pavement, a toll or two, the city falling away into brown hills
+					that went gold as the morning burned off. I read him our list.
+				</p>
+				<p>“Deckman’s. Fauna. Adobe Guadalupe. Vena Cava.”</p>
+				<p>“Deckman’s,” he said, and nodded slowly, like I had passed a test. “Good. You chose well.”</p>
+				<p>
+					By the end of the trip he was less our driver than our friend. He was on time, every time, to
+					the minute. He was patient on roads that did not deserve patience. He knew every turn, every
+					owner, every place worth the drive and a few that weren’t. His contact details are in
+					{' '}<a href={ITINERARY_PDF} target="_blank" rel="noopener noreferrer" class={pdfLink}
+						>the itinerary<span class="sr-only"> (PDF, opens in a new tab)</span></a
+					>. Book him.
+				</p>
+			</section>
+
+			<section id="villa" data-chapter aria-labelledby="villa-title" class={section}>
+				<h2 id="villa-title" class={h2}>{chapterTitle.villa}</h2>
+				<p>
+					<StoryLink href={links.banyanTreeVeya}>Banyan Tree Veya</StoryLink> sits among the vines of its
+					own winery, and cars stay out of the property. That one rule changes everything. You start
+					hearing things.
+				</p>
+				<StoryFigure layout="wide" images={[photos.p03]} />
+				<p>
+					I’ll say this plainly, because it matters. We stayed in the Harmony Suite Sunset Villa, one of
+					the best on the property, and I’m sure that colored everything. Even so, the villa was only
+					the second-best thing about the stay. The first was the service, and that is not a small
+					thing to say.
+				</p>
+				<StoryFigure layout="wide" images={[photos.p04]} />
+				<StoryFigure layout="full" images={[photos.p05]} />
+				<p>
+					The first night we didn’t leave. Fire in the pit outside, fire in the fireplace inside, the
+					plunge pool warm as bathwater, its jets pushing gently instead of pounding, room for two,
+					maybe three, a glass of wine on the ledge, and above us more stars than Long Beach has ever
+					admitted to, and out past the vines the lights of the other villas and haciendas, white walls
+					and tile roofs, Spanish, Mediterranean, scattered across the dark like someone had placed them
+					on purpose, and somewhere a dog barked twice and quit, and later, much later and farther off,
+					a coyote, one long thin note, then nothing. No engines. No tires on gravel. No freeway hum.
+					Just the fire talking to itself.
+				</p>
+			</section>
+
+			<section id="deckmans" data-chapter aria-labelledby="deckmans-title" class={section}>
+				<h2 id="deckmans-title" class={h2}>{chapterTitle.deckmans}</h2>
+				<p>
+					A word on the food before the food. For a valley of farms and dirt roads, the Valle draws an
+					unreasonable amount of attention from Michelin. The
+					{' '}<StoryLink href={links.michelin2026}>2026 guide gave stars to five restaurants in the
+					region</StoryLink>. Mexico City has <StoryLink href={links.mexicoStars}>more in raw
+					numbers</StoryLink>, but per person the Valle <StoryLink href={links.bajaStars}>wins
+					easily</StoryLink>, and it isn’t close.
+				</p>
+				<p>
+					Most of the Valle hides at the end of a dirt road.
+					{' '}<StoryLink href={links.deckmans}>Deckman’s en el Mogor</StoryLink> sits right off the highway,
+					and then it makes you forget the highway exists. Walls of stone and hay bales. Open to the
+					air. Everything grown or caught close by, and everything cooked over fire.
+				</p>
+				<StoryFigure layout="wide" images={[photos.p07]} />
+				<p>
+					We started with oysters, cold and clean as seawater. Then a pâté. I couldn’t tell you the
+					protein, and I’ve decided I don’t need to know. Then a two-pound ribeye, black at the edges
+					and rosy all the way through, the kind of steak that makes the table go quiet. The cocktails
+					were excellent too, which felt almost unfair.
+				</p>
+				<p>At some point Melissa set her fork down.</p>
+				<p>“This is one of the best meals I’ve ever had.”</p>
+				<p>“Same,” I said. “Easily.”</p>
+				<p>
+					I’ve eaten at maybe three Michelin-starred restaurants in my life. Deckman’s, which holds a
+					{' '}<StoryLink href={links.michelinGreenStar}>Michelin Green Star for its sustainable
+					cooking</StoryLink>, beat all of them, and not by a little.
+				</p>
+				<p>
+					Elias had called it. He lives there, and he still raved about the place. If you go to the
+					Valle and skip everything else, don’t skip Deckman’s.
+				</p>
+				<StoryFigure layout="full" images={[photos.p08]} />
+			</section>
+
+			<section id="fauna" data-chapter aria-labelledby="fauna-title" class={section}>
+				<h2 id="fauna-title" class={h2}>{chapterTitle.fauna}</h2>
+				<p>“Fauna,” Elias said, “is una experiencia gastronómica.”</p>
+				<p>He said it like a promise.</p>
+				<p>
+					<StoryLink href={links.fauna}>Fauna</StoryLink> sits at Bruma, a property so big and so
+					polished it felt like a small town built by someone with very good taste. Long communal
+					tables. Low light. Smart casual. Strangers side by side, each pair in its own bubble until
+					someone started a conversation.
+				</p>
+				<StoryFigure layout="wide" images={[photos.p09]} />
+				<p>
+					Melissa started a few. She’d brought our Polaroid, and it became the most popular guest at the
+					table. She took pictures of other diners, they took pictures of us, and for a while the long
+					table felt like one party.
+				</p>
+				<p>
+					Baked squash with crema. Sopes with a braised meat I believe was beef. Octopus for me, tender
+					and smoky, delicioso. A lamb quesadilla for Melissa. A smoky mezcal cocktail I’d score a ten
+					without thinking about it. I don’t usually do dessert, but the banana ice cream over a
+					chocolate chip brownie with chocolate crisp was ridiculous. I managed one bite. It was the
+					best bite of the night.
+				</p>
+				<p>
+					Fauna ranked <StoryLink href={links.latam50Best}>No. 17 on Latin America’s 50 Best
+					Restaurants in 2025</StoryLink>, and it earned every bit of that. The only thing it couldn’t
+					beat was Deckman’s.
+				</p>
+			</section>
+
+			<section id="wineries" data-chapter aria-labelledby="wineries-title" class={section}>
+				<h2 id="wineries-title" class={h2}>{chapterTitle.wineries}</h2>
+				<StoryFigure layout="inset" images={[photos.p06]} />
+				<p>
+					Technically we visited three wineries, since our hotel sits on the third.
+					{' '}<StoryLink href={links.veyaDining}>Pictograma</StoryLink> works with Grenache, and everything
+					in our glasses was some version of that one grape. The Blanco was our favorite.
+				</p>
+				<StoryFigure layout="wide" images={[photos.p10]} />
+				<p>
+					<StoryLink href={links.adobeGuadalupe}>Adobe Guadalupe</StoryLink> was the classic of the two
+					we toured. Courtyards, thick walls, old-world calm. The owners named many of their wines for
+					archangels in memory of their son, and once you know that, every label reads differently. I
+					like my reds spicy and peppery, Syrah and Shiraz, so we went home with Serafiel, a blend of
+					Cabernet Sauvignon and Syrah.
+				</p>
+				<p>
+					I’ll admit that I’d planned to write here that their rioja was excellent, as a cheeky way to
+					practice my Spanish for “red.” Rioja is a region of Spain. Red is rojo. Red wine is vino
+					tinto. I’m working on it.
+				</p>
+				<p>
+					They told us about their bed and breakfast, where the staff cook breakfast in the kitchen and
+					serve it the traditional way. We walked out to see their Azteca horses, and guests at the inn
+					can ride other horses through the vines.
+				</p>
+				<p>
+					<StoryLink href={links.venaCava}>Vena Cava</StoryLink> might have been even cooler. The buildings sit under the upturned hulls of old boats
+					{' '}<StoryLink href={links.venaCavaHulls}>salvaged from the harbor in Ensenada</StoryLink>,
+					keels to the sky, so the tasting room feels like the inside of a ship that capsized somewhere
+					nice.
+				</p>
+				<StoryFigure layout="wide" images={[photos.p11]} />
+				<p>
+					Inside it was dark and cool, bottles and casks stacked behind our guide, Jorge, who knew
+					everything and shared it like a friend. The natural wines were the standouts. One series is
+					called Crystal Ship, and I grinned when I saw it, because
+					“The Crystal Ship” is a Doors song, and the
+					Doors are my band. Vena Cava is small, so much of what we tasted you won’t find anywhere else.
+				</p>
+				<StoryFigure layout="pair" images={[photos.p12, photos.p13]} />
+				<p>
+					There’s a restaurant on site, Troika, that people
+					talk about with real reverence.
+				</p>
+				<p>“Troika,” Elias said. “Next time.”</p>
+				<p>We took home a 2021 Big Blend.</p>
+				<StoryFigure layout="wide" images={[photos.p14]} />
+			</section>
+
+			<section id="field-notes" data-chapter aria-labelledby="field-notes-title" class={section}>
+				<h2 id="field-notes-title" class={h2}>{chapterTitle['field-notes']}</h2>
+				<p>For anyone who wants to do this themselves.</p>
+				<p>
+					<strong class="font-semibold text-zinc-50">Monday through Wednesday, with a caveat.</strong>
+					Many places in the Valle open only Thursday through Sunday. We stayed Monday to Thursday
+					morning and saw almost no other guests at the hotel, and the restaurants were nearly empty.
+					Everywhere we wanted to go was open, though <StoryLink href={links.veyaDining}>Amapola</StoryLink>,
+					the hotel’s Michelin-recognized restaurant, was closed during our stay. I’d still recommend
+					weekdays. Just expect a sleepier valley and check hours first.
+				</p>
+				<p>
+					<strong class="font-semibold text-zinc-50">Park at the border and walk.</strong> We parked in
+					San Ysidro, walked across, and met our driver on the other side. The transfer from the border
+					cost about $175, and having him for a full day cost about the same. The real payoff comes on
+					the way home. By car without SENTRI, the northbound
+					wait is often around three hours. We walked back in about fifteen minutes. With SENTRI it
+					would have been nearly instant. If you’d rather drive, drive to the Valle and have your
+					hotel’s concierge book a driver from there. Elias’s details are in
+					{' '}<a href={ITINERARY_PDF} target="_blank" rel="noopener noreferrer" class={pdfLink}
+						>the itinerary<span class="sr-only"> (PDF, opens in a new tab)</span></a
+					>.
+				</p>
+				<p>
+					<strong class="font-semibold text-zinc-50">The roads.</strong> The highway down from Tijuana
+					is easy: newly paved, a toll or two. Between the wineries, it’s rough dirt roads, and the
+					signs are often boards nailed to utility poles. We never had to navigate, so I can’t vouch for
+					GPS out there. I was glad someone else was driving.
+				</p>
+				<p>
+					<strong class="font-semibold text-zinc-50">It’s more modern than you’d think.</strong>
+					Wineries, restaurants and hotels were all new or beautifully kept, and we paid with a tap
+					everywhere we went. Don’t count on Uber or Lyft in the Valle. Plan your rides.
+				</p>
+				<p>
+					<strong class="font-semibold text-zinc-50">The wine limit.</strong> We were told we could each
+					bring back one liter, and under <StoryLink href={links.caWineLimit}>California’s rules for
+					land crossings</StoryLink>, that’s right: one liter per adult every 31 days. One winery said
+					you can bring more, but the paperwork made it not worth it. So we came home with one bottle
+					each, the Serafiel and the Big Blend. The rumor about next year is true.
+					{' '}<StoryLink href={links.ab2751}>AB 2751, signed in September 2026</StoryLink>, raises the limit
+					to six liters starting January 1, 2027. That’s eight standard bottles.
+				</p>
+				<StoryFigure layout="inset" images={[photos.p15]} />
+				<p>
+					<strong class="font-semibold text-zinc-50">When to go.</strong> Late October was wonderful,
+					with Día de Muertos everywhere you looked. Elias says the best time is August, during the
+					harvest, when the <StoryLink href={links.valleWiki}>Fiestas de la Vendimia</StoryLink> fill the
+					valley with festivals. With about 150 wineries producing
+					{' '}<StoryLink href={links.valleWiki}>roughly 70 percent of Mexico’s wine</StoryLink>, there’s plenty to celebrate.
+				</p>
+			</section>
+
+			<section id="next-time" data-chapter aria-labelledby="next-time-title" class={section}>
+				<h2 id="next-time-title" class={h2}>{chapterTitle['next-time']}</h2>
+				<p>
+					The one place that rivals Deckman’s for fame is
+					{' '}<StoryLink href={links.donaEsthela}>La Cocina de Doña Esthela</StoryLink>, a ranch kitchen
+					{' '}<StoryLink href={links.donaEsthelaWiki}>named the best breakfast in the world</StoryLink> by
+					FoodieHub in 2015 and now a Michelin Bib Gourmand. We
+					didn’t make it.
+				</p>
+				<p>“You missed it,” Elias said, and shook his head, not unkindly.</p>
+				<p>So that’s on the list. Doña Esthela for breakfast. Troika for lunch. August, if we can swing it.</p>
+				<StoryFigure layout="column" images={[photos.p16]} />
+				<p>
+					This was one of my favorite vacations ever, right up there with Honolulu and Kauai with
+					Melissa. We came home with two bottles of wine, a stack of Polaroids, and a friend in Baja
+					named Elias.
+				</p>
+			</section>
+
+			<section
+				id="colophon"
+				data-chapter
+				data-chapter-meta
+				aria-labelledby="colophon-title"
+				class:list={[section, 'border-t border-zinc-800/80 pt-14']}
 			>
-				Hero photo
-			</div>
-			<figcaption class="mt-3 text-sm text-zinc-500">
-				The valley in late October, after the harvest.
-			</figcaption>
-		</figure>
-
-		<div class="space-y-16 text-base leading-relaxed text-zinc-300">
-			<section aria-labelledby="arrival">
-				<h2 id="arrival" class="text-2xl font-semibold tracking-tight text-zinc-50">Arrival</h2>
-				<div class="mt-5 space-y-5">
+				<h2 id="colophon-title" class={h2}>{chapterTitle.colophon}</h2>
+				<p>No secrets here. I work in AI, so it felt wrong to hide the machinery.</p>
+				<p>
+					A ChatGPT agent planned and booked the trip, under my direction, and I checked its work. After
+					we got home, I wrote the story: the notes, the memories, the opinions, and the large majority
+					of the words on this page. Claude helped shape the narrative, check the facts and find the
+					sources, and wrote the formatting and photo plan. Gemini turned that plan into a prompt.
+					Claude Code turned the prompt into the page you’re reading.
+				</p>
+				<p>
+					The strategy was simple. Give each model one job it’s good at, set the rules up front (my
+					voice, verify every fact, link the sources), and keep a human in charge of what’s true.
+				</p>
+				<aside
+					aria-label="Disclosure"
+					class="rounded-xl border border-zinc-800 bg-zinc-900/40 px-5 py-5 text-zinc-300 sm:px-6"
+				>
 					<p>
-						The road into Valle de Guadalupe gives you time to slow down. The traffic thins, the
-						hills turn to rows of vines, and the pace shifts from schedules to meals. By late October
-						the harvest is in and the valley is quieter, which suited the purpose of the trip:
-						rest, good food, and very little on the calendar.
+						<strong class="font-semibold text-zinc-50">No sponsorships.</strong> I received nothing from
+						any business mentioned here. No comped meals, no discounts, no affiliate links. We loved this
+						trip and hope you get to take it too.
 					</p>
-					<p>
-						This is a short account of where we stayed, where we ate, and what stuck with me
-						afterward.
-					</p>
-				</div>
-			</section>
-
-			<section aria-labelledby="veya">
-				<h2 id="veya" class="text-2xl font-semibold tracking-tight text-zinc-50">Banyan Tree Veya</h2>
-				<div class="mt-5 space-y-5">
-					<p>
-						Banyan Tree Veya was home base. The villas sit low against the hillside, so the
-						landscape stays the main event, and the design keeps out of the way. Mornings started
-						slowly with coffee, a view across the vineyards, and no particular plan until the
-						afternoon.
-					</p>
-					<p>
-						What stood out was the restraint. The service was attentive without hovering, and
-						the property felt built to make you stay put, which after a long stretch of work was
-						exactly the point.
-					</p>
-				</div>
-				<figure class="mt-8">
-					<div
-						class="flex aspect-[3/2] w-full items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600"
-					>
-						Photo: Banyan Tree Veya
-					</div>
-					<figcaption class="mt-3 text-sm text-zinc-500">Morning at the villa.</figcaption>
-				</figure>
-			</section>
-
-			<section aria-labelledby="fauna">
-				<h2 id="fauna" class="text-2xl font-semibold tracking-tight text-zinc-50">Fauna</h2>
-				<div class="mt-5 space-y-5">
-					<p>
-						Dinner at Fauna was the most deliberate meal of the trip. The menu draws on what the
-						region produces, and each course builds on the last. It’s the kind of meal where you
-						notice the pacing as much as the plates.
-					</p>
-					<p>
-						Paired with local wine, it made a strong case that some of the most interesting cooking
-						in Mexico is happening a short drive south of the border.
-					</p>
-				</div>
-			</section>
-
-			<section aria-labelledby="deckmans">
-				<h2 id="deckmans" class="text-2xl font-semibold tracking-tight text-zinc-50">Deckman’s</h2>
-				<div class="mt-5 space-y-5">
-					<p>
-						Deckman’s was the counterpoint: open air, wood smoke, and cooking that feels closer to
-						the land. Eating outdoors as the light faded over the vineyard was the moment the trip
-						came together.
-					</p>
-					<p>
-						If Fauna was precision, Deckman’s was ease. Both were the right call, and I’d book them
-						again in the same order.
-					</p>
-				</div>
-				<figure class="mt-8">
-					<div
-						class="flex aspect-[3/2] w-full items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600"
-					>
-						Photo: Deckman’s
-					</div>
-					<figcaption class="mt-3 text-sm text-zinc-500">Dinner as the sun went down.</figcaption>
-				</figure>
-			</section>
-
-			<section aria-labelledby="takeaways">
-				<h2 id="takeaways" class="text-2xl font-semibold tracking-tight text-zinc-50">Takeaways</h2>
-				<div class="mt-5 space-y-5">
-					<p>
-						The valley rewards planning ahead and then leaving room. Book the dinners early, keep
-						the days loose, and let the drive set the pace. The full itinerary is below for anyone
-						planning a similar trip.
-					</p>
-				</div>
+				</aside>
 			</section>
 		</div>
 	</article>
 
-	<section aria-labelledby="itinerary-heading" class="mx-auto mt-20 max-w-3xl">
-		<h2 id="itinerary-heading" class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-			Itinerary
-		</h2>
-		<div class="mt-6">
-			<ItineraryViewer client:visible pdfUrl={ITINERARY_PDF} />
-		</div>
-	</section>
-
-	<section aria-labelledby="gallery-heading" class="mt-24 border-t border-zinc-800/80 pt-16">
-		<div class="flex flex-wrap items-baseline justify-between gap-4">
-			<h2 id="gallery-heading" class="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
-				Gallery
-			</h2>
-			<p class="text-sm text-zinc-600">Photos coming soon</p>
-		</div>
-
-		<!-- CSS masonry: multi-column layout; items avoid breaking across columns. -->
-		<ul class="mt-8 columns-1 gap-4 sm:columns-2 lg:columns-3">
-			{gallery.map(({ aspect, label }) => (
-				<li class="mb-4 break-inside-avoid">
-					<figure>
-						<div
-							class:list={[
-								aspect,
-								'flex w-full items-center justify-center rounded-lg border border-dashed border-zinc-800 bg-zinc-900/40 text-sm text-zinc-600',
-							]}
-						>
-							{label}
-						</div>
-					</figure>
-				</li>
-			))}
-		</ul>
-	</section>
+	<StoryProgress chapters={chapters} />
+	<StoryLightbox />
 </MainLayout>
+
+<style is:global>
+	/* Full-bleed photos span the viewport. --sbw (scrollbar width) is set by
+	   StoryProgress so 100vw never overflows; overflow-x: clip is the fallback. */
+	body {
+		overflow-x: clip;
+	}
+	.story-bleed {
+		width: calc(100vw - var(--sbw, 0px));
+		margin-inline: calc(50% - (100vw - var(--sbw, 0px)) / 2);
+	}
+	/* Wide photos overhang the text column on large screens. */
+	@media (min-width: 1024px) {
+		.story-wide {
+			margin-inline: -3rem;
+		}
+	}
+	@media (min-width: 1280px) {
+		.story-wide {
+			margin-inline: -4rem;
+		}
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		html {
+			scroll-behavior: smooth;
+		}
+	}
+</style>

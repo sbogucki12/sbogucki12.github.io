@@ -4,16 +4,24 @@ import '../styles/global.css';
 interface Props {
 	title: string;
 	description?: string;
+	/** Absolute or root-relative URL for og:image / twitter:image. */
+	ogImage?: string;
+	ogImageAlt?: string;
+	ogType?: 'website' | 'article';
 }
 
 const {
 	title,
 	description = 'Steve Bogucki: Division Manager of AI & Business Intelligence at the FAA, author of The Ghosts We Carry, creator of BOGOODSKI.dev, and DJ BOGOODSKI.',
+	ogImage,
+	ogImageAlt,
+	ogType = 'website',
 } = Astro.props;
 
 const GA_ID = 'G-EVKCT4JXLS';
 const siteUrl = 'https://bogoodski.com';
 const canonical = new URL(Astro.url.pathname, Astro.site ?? siteUrl);
+const ogImageUrl = ogImage ? new URL(ogImage, Astro.site ?? siteUrl).href : undefined;
 
 const navLinks = [
 	{ label: 'Home', href: '/' },
@@ -91,6 +99,15 @@ const jsonLd = {
 		<title>{title}</title>
 		<link rel="canonical" href={canonical} />
 
+		<meta property="og:type" content={ogType} />
+		<meta property="og:site_name" content="BOGOODSKI" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:url" content={canonical} />
+		{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+		{ogImageUrl && ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
+		<meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
+
 		<link rel="icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
@@ -102,6 +119,7 @@ const jsonLd = {
 		<script is:inline src="/scripts/ga-init.js"></script>
 
 		<script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+		<slot name="head" />
 	</head>
 	<body class="min-h-dvh bg-zinc-950 text-zinc-300 antialiased selection:bg-zinc-700 selection:text-zinc-50">
 		<a
@@ -123,7 +141,7 @@ const jsonLd = {
 					Bogoodski
 				</a>
 
-				<ul class="-mx-2 flex items-center gap-1 overflow-x-auto text-sm">
+				<ul class="relative -mx-2 flex items-center gap-1 overflow-x-auto text-sm">
 					{navLinks.map(({ label, href, external }) => {
 						const isActive = !external && href === currentPath;
 						return (

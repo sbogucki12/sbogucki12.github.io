@@ -1,0 +1,99 @@
+---
+import type { ImageMetadata } from 'astro';
+import { Image, getImage } from 'astro:assets';
+
+// One photo slot in a story. Layouts:
+//   hero    wide, loaded eagerly with high priority (one per page)
+//   full    full-bleed, edge to edge of the viewport
+//   wide    wider than the text column on large screens
+//   column  same width as the text column
+//   inset   floats beside the text from md up, full column width below that
+//   pair    two images side by side, wide
+// Every image opens in the page's lightbox (see StoryLightbox.astro).
+// Images are never cropped: non-full-bleed images are capped at 85% of the
+// viewport height and keep their own aspect ratio (object-fit: contain).
+
+type Photo = { src: ImageMetadata; alt: string };
+type Layout = 'hero' | 'full' | 'wide' | 'column' | 'inset' | 'pair';
+
+interface Props {
+	layout: Layout;
+	images: Photo[];
+	caption?: string;
+}
+
+const { layout, images, caption } = Astro.props;
+
+const WIDE_SIZES = '(min-width: 1280px) 896px, (min-width: 1024px) 864px, calc(100vw - 48px)';
+const config: Record<Layout, { widths: number[]; sizes: string }> = {
+	hero: { widths: [480, 768, 1080, 1440, 1792], sizes: WIDE_SIZES },
+	wide: { widths: [480, 768, 1080, 1440, 1792], sizes: WIDE_SIZES },
+	full: { widths: [640, 960, 1280, 1920, 2560], sizes: '100vw' },
+	column: { widths: [480, 768, 1080, 1536], sizes: '(min-width: 816px) 768px, calc(100vw - 48px)' },
+	inset: { widths: [400, 640, 800], sizes: '(min-width: 768px) 320px, calc(100vw - 48px)' },
+	pair: { widths: [320, 480, 720, 960], sizes: '(min-width: 1280px) 440px, (min-width: 1024px) 424px, 50vw' },
+};
+
+const { widths, sizes } = config[layout];
+const isHero = layout === 'hero';
+
+const prepared = await Promise.all(
+	images.map(async ({ src, alt }) => {
+		const usable = widths.filter((w) => w <= src.width);
+		const large = await getImage({ src, width: Math.min(2000, src.width), format: 'webp', quality: 72 });
+		return {
+			src,
+			alt,
+			widths: usable.length ? usable : [src.width],
+			ratio: src.width / src.height,
+			largeSrc: large.src,
+		};
+	}),
+);
+
+const figureClass = {
+	hero: 'story-wide mb-14',
+	full: 'story-bleed my-14 clear-both',
+	wide: 'story-wide my-12 clear-both',
+	column: 'my-12 clear-both',
+	inset: 'my-8 md:float-right md:mb-6 md:ml-8 md:mt-2 md:w-[20rem] xl:-mr-16',
+	pair: 'story-wide my-12 clear-both',
+}[layout];
+---
+
+<figure class={figureClass}>
+	<div class:list={[layout === 'pair' && 'grid grid-cols-2 items-start gap-3 sm:gap-4']}>
+		{prepared.map(({ src, alt, widths: w, ratio, largeSrc }) => (
+			<button
+				type="button"
+				class="group block w-full cursor-zoom-in rounded-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-400"
+				data-lightbox-src={largeSrc}
+				data-lightbox-alt={alt}
+			>
+				<Image
+					src={src}
+					alt={alt}
+					widths={w}
+					sizes={sizes}
+					format="webp"
+					quality={78}
+					loading={isHero ? 'eager' : 'lazy'}
+					decoding="async"
+					fetchpriority={isHero ? 'high' : 'auto'}
+					class:list={[
+						'mx-auto block h-auto bg-zinc-900 object-contain',
+						layout === 'full' ? 'w-full' : 'rounded-xl',
+						'transition-opacity duration-300 group-hover:opacity-90 motion-reduce:transition-none',
+					]}
+					style={layout === 'full' ? undefined : `width: min(100%, calc(85svh * ${ratio.toFixed(4)}))`}
+				/>
+				<span class="sr-only">Open larger view</span>
+			</button>
+		))}
+	</div>
+	{caption && (
+		<figcaption class:list={['mt-3 text-sm text-zinc-500', layout === 'full' && 'mx-auto max-w-3xl px-6']}>
+			{caption}
+		</figcaption>
+	)}
+</figure>

@@ -1,0 +1,21 @@
+---
+// Inline story link. Always opens in a new tab with rel="noopener noreferrer".
+// If no href is set yet, the text renders plain so the page never ships a dead link.
+
+interface Props {
+	href?: string;
+}
+
+const { href } = Astro.props;
+---
+
+{href ? (
+	<a
+		href={href}
+		target="_blank"
+		rel="noopener noreferrer"
+		class="rounded-sm text-zinc-100 underline decoration-zinc-600 underline-offset-4 transition-colors hover:text-white hover:decoration-zinc-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-400"
+	><slot /><span class="sr-only"> (opens in a new tab)</span></a>
+) : (
+	<slot />
+)}

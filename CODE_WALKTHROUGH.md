@@ -1,26 +1,18 @@
-# Code Walkthrough: Astro Islands & UX Hover Isolation
+# Code Walkthrough: Architecture & Quirks
 
-Since you recently built BOGOODSKI.dev as a Vite/React Single Page Application (SPA), it is crucial to understand why this personal site uses Astro, and how we managed the CSS UX logic for the Bento Box grid.
+## Zero-JS Architecture & Vanilla Enhancements
+Astro renders every page to plain HTML at build time. When a user visits the site, they download a lightweight, raw HTML document. No JavaScript is sent unless a page explicitly asks for it.
 
-## The Astro Island Model (Partial Hydration)
-Astro flips the standard React SPA model completely. It renders your React components to pure HTML *on the server at build time*. When a user visits the site, they download a lightweight, raw HTML document. No JavaScript is sent by default.
-
-When we needed the interactive PDF viewer (`<ItineraryViewer client:visible />`), we created an **Astro Island**. 
-
-**How `client:visible` Works:**
-1.  Astro serves the static HTML for the whole page.
-2.  An Intersection Observer watches the user's scrolling. 
-3.  The exact millisecond the user scrolls the component into the viewport, Astro dynamically downloads *only* the specific React JavaScript needed for that one component.
-4.  Astro "hydrates" the island, attaching the event listeners and React state, making it fully interactive.
+The site originally used a React **Astro Island** (the `ItineraryViewer` component, hydrated with `client:visible`) on the Valle de Guadalupe page. We removed React from this build completely. Instead of shipping a framework runtime for a few interactions, the interactive pieces are small vanilla JavaScript `<script>` blocks that live directly in the Astro templates. Astro bundles each one into a tiny module that runs only on the page that uses it:
+*   **Reading progress UI** (`src/components/story/StoryProgress.astro`): a top progress bar driven by a `requestAnimationFrame`-throttled scroll listener, a countdown pill estimated at 230 wpm, and a desktop chapter rail that tracks the current chapter with an `IntersectionObserver`. Smooth scrolling and transitions are disabled under `prefers-reduced-motion`.
+*   **Lightbox** (`src/components/story/StoryLightbox.astro`): a single native `<dialog>` opened with `showModal()`, which provides focus containment, Escape to close, and focus return to the clicked photo without any library.
 
 ## UX Architecture: Hover State Isolation
-During the build, we encountered a classic UX issue on the DJ and Endurance Running cards. Originally, the entire card had a CSS `transform: translateY()` "lift" effect. This is a universal UI affordance that signals to the user: *this entire block is a single clickable button.*
+When converting the DJ and Endurance Bento cards into 'mini-hubs' with multiple links, we decoupled the container aesthetics from the interactive states.
+*   **The Container:** Retains the static aesthetic styling (glow, gradient, border sheen) but does *not* lift or translate.
+*   **The Children (Buttons):** Each distinct link inside the container receives its own micro-interaction and `target='_blank'` tags.
+This ensures the Bento Grid feels alive while maintaining precise, expected click-targets.
 
-However, when we converted those cards into "mini-hubs" containing multiple distinct links (SoundCloud, TikTok, Strava, Instagram, etc.), keeping the macro-lift effect created cognitive friction. If a user clicked the empty space on a lifted card, nothing happened.
-
-**The Fix:**
-We decoupled the container aesthetics from the interactive states.
-*   **The Container:** Retains the static aesthetic styling (glow, gradient, border sheen) but does *not* lift.
-*   **The Children (Buttons):** Each distinct link inside the container receives its own micro-interaction (color shift, brightness bump, underline) and `target="_blank"` accessibility tags.
-
-This approach ensures the Bento Grid feels alive while maintaining precise, expected click-targets for the user.
+## Astro Template Whitespace Quirk
+This is a consistent `.astro` template rendering rule, not an occasional glitch: whenever an element or component (like an `<a>` tag or `<StoryLink>`) starts on a new line, Astro's compiler drops the whitespace before it. Text on the previous line runs straight into the link (e.g., 'here it is:Our full itinerary').
+**Solution:** When a line starts with a tag that follows text, put an explicit space in front of it with `{' '}`, or keep the preceding word and the tag on the same line.
