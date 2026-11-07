@@ -8,20 +8,30 @@ interface Props {
 	ogImage?: string;
 	ogImageAlt?: string;
 	ogType?: 'website' | 'article';
+	/** Emit a schema.org ProfilePage node (homepage only) so Google detects a Profile page. */
+	profilePage?: boolean;
 }
+
+// Site-wide share image (public/og-default.png, 1200x627). Pages can override with `ogImage`.
+const DEFAULT_OG_IMAGE = '/og-default.png';
+const DEFAULT_OG_IMAGE_ALT = 'Steve Bogucki (BOGOODSKI): technologist, author, builder';
+const DEFAULT_OG_IMAGE_WIDTH = 1200;
+const DEFAULT_OG_IMAGE_HEIGHT = 627;
 
 const {
 	title,
 	description = 'Steve Bogucki: Division Manager of AI & Business Intelligence at the FAA, author of The Ghosts We Carry, creator of BOGOODSKI.dev, and DJ BOGOODSKI.',
-	ogImage,
-	ogImageAlt,
+	ogImage = DEFAULT_OG_IMAGE,
+	ogImageAlt = ogImage === DEFAULT_OG_IMAGE ? DEFAULT_OG_IMAGE_ALT : undefined,
 	ogType = 'website',
+	profilePage = false,
 } = Astro.props;
 
 const GA_ID = 'G-EVKCT4JXLS';
 const siteUrl = 'https://bogoodski.com';
 const canonical = new URL(Astro.url.pathname, Astro.site ?? siteUrl);
-const ogImageUrl = ogImage ? new URL(ogImage, Astro.site ?? siteUrl).href : undefined;
+const ogImageUrl = new URL(ogImage, Astro.site ?? siteUrl).href;
+const isDefaultOgImage = ogImage === DEFAULT_OG_IMAGE;
 
 const navLinks = [
 	{ label: 'Home', href: '/' },
@@ -42,6 +52,15 @@ const jsonLd = {
 			name: 'Steve Bogucki',
 			alternateName: ['BOGOODSKI', 'DJ BOGOODSKI'],
 			url: `${siteUrl}/`,
+			image: {
+				'@type': 'ImageObject',
+				'@id': `${siteUrl}/#headshot`,
+				url: `${siteUrl}/steve-bogucki-headshot.jpg`,
+				contentUrl: `${siteUrl}/steve-bogucki-headshot.jpg`,
+				width: 615,
+				height: 615,
+				caption: 'Steve Bogucki',
+			},
 			jobTitle: 'Division Manager, AI & Business Intelligence',
 			worksFor: {
 				'@type': 'GovernmentOrganization',
@@ -84,6 +103,21 @@ const jsonLd = {
 			author: { '@id': `${siteUrl}/#person` },
 			publisher: { '@id': `${siteUrl}/#person` },
 		},
+		// ProfilePage is the rich-result type Google recognises for a personal
+		// homepage. It lives in the same @graph so the Person @id resolves.
+		...(profilePage
+			? [
+					{
+						'@type': 'ProfilePage',
+						'@id': `${siteUrl}/#profilepage`,
+						url: `${siteUrl}/`,
+						name: title,
+						inLanguage: 'en',
+						isPartOf: { '@id': `${siteUrl}/#website` },
+						mainEntity: { '@id': `${siteUrl}/#person` },
+					},
+				]
+			: []),
 	],
 };
 ---
@@ -105,9 +139,16 @@ const jsonLd = {
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonical} />
-		{ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
-		{ogImageUrl && ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
-		<meta name="twitter:card" content={ogImageUrl ? 'summary_large_image' : 'summary'} />
+		<meta property="og:image" content={ogImageUrl} />
+		{isDefaultOgImage && <meta property="og:image:type" content="image/png" />}
+		{isDefaultOgImage && <meta property="og:image:width" content={String(DEFAULT_OG_IMAGE_WIDTH)} />}
+		{isDefaultOgImage && <meta property="og:image:height" content={String(DEFAULT_OG_IMAGE_HEIGHT)} />}
+		{ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={ogImageUrl} />
+		{ogImageAlt && <meta name="twitter:image:alt" content={ogImageAlt} />}
 
 		<link rel="icon" href="/favicon.ico" />
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
