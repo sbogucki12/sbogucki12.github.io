@@ -12,11 +12,12 @@ interface Props {
 	profilePage?: boolean;
 }
 
-// Site-wide share image (public/og-default.png, 1200x627). Pages can override with `ogImage`.
-const DEFAULT_OG_IMAGE = '/og-default.png';
+// Site-wide share image (public/og-image.jpg, full-res 1734x907 so LinkedIn's
+// recompression has detail to work with; rename the file to bust LinkedIn's cache). Pages can override with `ogImage`.
+const DEFAULT_OG_IMAGE = '/og-image.jpg';
 const DEFAULT_OG_IMAGE_ALT = 'Steve Bogucki (BOGOODSKI): technologist, author, builder';
-const DEFAULT_OG_IMAGE_WIDTH = 1200;
-const DEFAULT_OG_IMAGE_HEIGHT = 627;
+const DEFAULT_OG_IMAGE_WIDTH = 1734;
+const DEFAULT_OG_IMAGE_HEIGHT = 907;
 
 const {
 	title,
@@ -140,7 +141,7 @@ const jsonLd = {
 		<meta property="og:description" content={description} />
 		<meta property="og:url" content={canonical} />
 		<meta property="og:image" content={ogImageUrl} />
-		{isDefaultOgImage && <meta property="og:image:type" content="image/png" />}
+		{isDefaultOgImage && <meta property="og:image:type" content="image/jpeg" />}
 		{isDefaultOgImage && <meta property="og:image:width" content={String(DEFAULT_OG_IMAGE_WIDTH)} />}
 		{isDefaultOgImage && <meta property="og:image:height" content={String(DEFAULT_OG_IMAGE_HEIGHT)} />}
 		{ogImageAlt && <meta property="og:image:alt" content={ogImageAlt} />}
