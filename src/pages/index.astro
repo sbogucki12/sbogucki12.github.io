@@ -1,22 +1,33 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import DiscordTile from '../components/DiscordTile';
+
+// Permanent general onboarding invite.
+const DISCORD_INVITE_URL = 'https://discord.gg/JXVRfc9unK';
 
 // Shared surface + hover treatment so every clickable tile behaves the same:
 // lift, brighter border, soft shadow, top-edge sheen, arrow nudge.
-const tile =
-	'group relative isolate flex flex-col overflow-hidden rounded-2xl border border-zinc-800/80';
+//
+// Border colors live outside the `*Base` strings on purpose. Tailwind orders
+// utilities in its own stylesheet order, not class order, so a tile that adds
+// its own border color next to the grey one can silently lose (this happened on
+// the DJ tile). Tiles with a custom border color use `tileBase` / `glowBase`.
+const tileBase =
+	'group relative isolate flex flex-col overflow-hidden rounded-2xl border';
+const tile = `${tileBase} border-zinc-800/80`;
 const pad = 'p-6 sm:p-7';
 // `glow` is the hover treatment without movement, for tiles that contain links
 // rather than being one (the DJ hub). `interactive` adds the lift for whole-tile links.
-const glow = [
+const glowBase = [
 	'transition duration-300 ease-out',
-	'hover:border-zinc-600/80 hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
+	'hover:shadow-[0_18px_40px_-20px_rgba(0,0,0,0.8)]',
 	'motion-reduce:transition-none',
 	// Sheen: a faint light along the top edge that fades in on hover.
 	'before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:-z-10 before:h-px',
 	'before:bg-gradient-to-r before:from-transparent before:via-zinc-400/50 before:to-transparent',
 	'before:opacity-0 before:transition-opacity before:duration-300 hover:before:opacity-100',
 ].join(' ');
+const glow = `${glowBase} hover:border-zinc-600/80`;
 const interactive = [
 	glow,
 	'hover:-translate-y-0.5 motion-reduce:hover:translate-y-0',
@@ -78,6 +89,7 @@ const stravaIcon = ['M4 16l5.5-11 5.5 11', 'M12 16l3 6 3-6'];
 		lg layout:  [ hero  hero | book ]
 		            [ pro | run  | book ]
 		            [ dj  | travel travel ]
+		            [ discord discord discord ]
 	-->
 	<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:auto-rows-[minmax(15rem,auto)]">
 		<!-- Intro / Hero -->
@@ -247,7 +259,7 @@ const stravaIcon = ['M4 16l5.5-11 5.5 11', 'M12 16l3 6 3-6'];
 		<!-- A hub, not a single link: a <section> so the links inside it are valid (no nested <a>). -->
 		<section
 			aria-labelledby="dj-heading"
-			class:list={[tile, pad, glow, 'border-indigo-900/50 bg-gradient-to-br from-purple-950 via-indigo-950 to-zinc-950 hover:border-indigo-700/60']}
+			class:list={[tileBase, pad, glowBase, 'border-indigo-900/50 bg-gradient-to-br from-purple-950 via-indigo-950 to-zinc-950 hover:border-indigo-700/60']}
 		>
 			<div
 				aria-hidden="true"
@@ -361,5 +373,8 @@ const stravaIcon = ['M4 16l5.5-11 5.5 11', 'M12 16l3 6 3-6'];
 				</a>
 			</div>
 		</section>
+
+		<!-- Discord community: full-width row (static React component, no client JS). -->
+		<DiscordTile inviteUrl={DISCORD_INVITE_URL} className="md:col-span-2 lg:col-span-3" />
 	</div>
 </MainLayout>
